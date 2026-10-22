@@ -1,0 +1,12 @@
+{
+  "status": "ok",
+  "service": "Music Practice & Metronome Web App",
+  "uptime_seconds": 327,
+  "timestamp": "2026-10-22T13:36:36.489Z",
+  "database": {
+    "status": "connected",
+    "host": "music-db",
+    "database_name": "music_practice_db",
+    "server_time": "2026-10-22T13:36:36.488Z"
+  }
+}

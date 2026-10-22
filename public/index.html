@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALT-ROCK RIG &bull; Metronome & Practice Log</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;600;800&family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            rock: ['"Bebas Neue"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+            sans: ['"Prompt"', 'sans-serif']
+          },
+          colors: {
+            deep: {
+              950: '#030712',
+              900: '#060d1f',
+              850: '#0a142e',
+              800: '#0e1d42',
+              700: '#142759',
+              600: '#1d357a'
+            },
+            electric: {
+              glow: '#00e5ff',
+              cyan: '#38bdf8',
+              blue: '#2563eb',
+              cobalt: '#1d4ed8'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --bg-dark: #050b18;
+      --panel-dark: #091326;
+      --panel-border: #1a2f5a;
+      --electric-blue: #00e5ff;
+      --cobalt-blue: #2563eb;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(37, 99, 235, 0.18), transparent 70%),
+        repeating-linear-gradient(45deg, rgba(14, 29, 66, 0.15) 0, rgba(14, 29, 66, 0.15) 1px, transparent 0, transparent 24px);
+      color: #e2e8f0;
+      font-family: 'Prompt', sans-serif;
+    }
+
+    /* Stompbox & Rack Unit Panels */
+    .rack-panel {
+      background: linear-gradient(180deg, #0d1a36 0%, #071022 100%);
+      border: 1px solid #1e3a6d;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 32px -8px rgba(0, 0, 0, 0.85);
+      position: relative;
+    }
+
+    /* Industrial Screw Details in Corners */
+    .screw {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #2a3c5a;
+      box-shadow: inset 0 1px 1px rgba(0,0,0,0.8), 0 1px 0 rgba(255,255,255,0.15);
+      position: absolute;
+    }
+    .screw-tl { top: 8px; left: 8px; }
+    .screw-tr { top: 8px; right: 8px; }
+    .screw-bl { bottom: 8px; left: 8px; }
+    .screw-br { bottom: 8px; right: 8px; }
+
+    /* Tape / Stamped Label look */
+    .masking-tape {
+      background: #e2e8f0;
+      color: #050b18;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      box-shadow: 1px 2px 5px rgba(0,0,0,0.4);
+      display: inline-block;
+      transform: rotate(-0.5deg);
+    }
+
+    /* Pedalboard LED Beat Indicators */
+    .pedal-led {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #091326;
+      border: 2px solid #1a2f5a;
+      position: relative;
+      transition: all 0.05s ease-out;
+    }
+    .pedal-led::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+    }
+
+    /* Active Electric Blue LED Flash */
+    .led-active {
+      background: #00e5ff !important;
+      border-color: #ffffff !important;
+      box-shadow: 0 0 18px #00e5ff, 0 0 35px rgba(0, 229, 255, 0.6) !important;
+    }
+    .led-accent {
+      background: #3b82f6 !important;
+      border-color: #93c5fd !important;
+      box-shadow: 0 0 22px #3b82f6, 0 0 45px rgba(59, 130, 246, 0.8) !important;
+    }
+
+    /* Tactile Stomp Switch */
+    .stomp-btn {
+      background: linear-gradient(180deg, #1e3a6d 0%, #0d1d3d 100%);
+      border: 2px solid #38bdf8;
+      box-shadow: 0 6px 0 #071124, 0 10px 15px rgba(0,0,0,0.6);
+      transition: all 0.06s ease-in;
+    }
+    .stomp-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #071124, 0 4px 8px rgba(0,0,0,0.6);
+    }
+
+    .stomp-btn-stop {
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid #ef4444;
+      box-shadow: 0 6px 0 #050811, 0 10px 15px rgba(0,0,0,0.6);
+    }
+    .stomp-btn-stop:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #050811, 0 4px 8px rgba(0,0,0,0.6);
+    }
+
+    /* Grunge Grid Lines */
+    .grit-border {
+      border: 1px solid rgba(56, 189, 248, 0.18);
+    }
+
+    /* Custom Range Slider (Electric Blue Track) */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: #060e20;
+      height: 8px;
+      border-radius: 4px;
+      border: 1px solid #1e3a6d;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 24px;
+      width: 14px;
+      border-radius: 2px;
+      background: #00e5ff;
+      border: 1px solid #ffffff;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.8);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-electric-blue selection:text-black">
+
+  <!-- TOP HEADER / AMP RACK BAR -->
+  <header class="border-b-2 border-slate-800/90 bg-deep-950/90 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Logo / Rig Brand -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-sm bg-gradient-to-b from-blue-600 to-deep-900 border border-electric-cyan flex items-center justify-center shadow-lg shadow-blue-500/20">
+          <span class="font-rock text-2xl tracking-tighter text-electric-glow">⚡</span>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="font-rock text-2xl tracking-wider text-white">ALT-ROCK RIG</span>
+            <span class="text-[10px] font-mono tracking-widest px-1.5 py-0.5 rounded bg-blue-950/80 text-electric-cyan border border-blue-800">METRONOME &bull; PEDAL</span>
+          </div>
+          <p class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Electric Guitar & Bass Practice Workstation</p>
+        </div>
+      </div>
+
+      <!-- Rig Status Indicator (Vintage Amp Style) -->
+      <div class="flex items-center space-x-4">
+        <div id="healthBadge" class="flex items-center space-x-2 px-3 py-1 rounded bg-deep-900 border border-slate-800">
+          <span id="healthLed" class="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6]"></span>
+          <span id="healthText" class="text-xs font-mono font-semibold tracking-wider text-slate-300">STANDBY / CONNECTING</span>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN RIG WORKBENCH -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
+
+    <!-- RACK STATS STRIP -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="rack-panel rounded-lg p-3.5 border-l-4 border-l-blue-500">
+        <div class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">SONGS IN REPERTOIRE</div>
+        <div class="text-3xl font-rock tracking-wider text-white mt-0.5" id="statSongs">0</div>
+        <div class="text-[10px] text-slate-500 font-mono mt-0.5">🎸 TRACKS READY</div>
+      </div>
+      <div class="rack-panel rounded-lg p-3.5 border-l-4 border-l-electric-cyan">
+        <div class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">PRACTICE ROUNDS</div>
+        <div class="text-3xl font-rock tracking-wider text-electric-cyan mt-0.5" id="statSessions">0</div>
+        <div class="text-[10px] text-slate-500 font-mono mt-0.5">⏱️ COMPLETED RUNS</div>
+      </div>
+      <div class="rack-panel rounded-lg p-3.5 border-l-4 border-l-indigo-500">
+        <div class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">TOTAL LOGGED TIME</div>
+        <div class="text-3xl font-rock tracking-wider text-blue-400 mt-0.5" id="statMinutes">0 <span class="text-sm font-sans font-normal text-slate-400">MINS</span></div>
+        <div class="text-[10px] text-slate-500 font-mono mt-0.5">⏳ SHRED ACCUMULATION</div>
+      </div>
+      <div class="rack-panel rounded-lg p-3.5 border-l-4 border-l-sky-400">
+        <div class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">AVERAGE TEMPO</div>
+        <div class="text-3xl font-rock tracking-wider text-electric-glow mt-0.5" id="statAvgBpm">0 <span class="text-sm font-sans font-normal text-slate-400">BPM</span></div>
+        <div class="text-[10px] text-slate-500 font-mono mt-0.5">⚡ SPEED LOCK</div>
+      </div>
+    </div>
+
+    <!-- MAIN TWO-COLUMN RIG (Left: Stomp Metronome & Session Logger, Right: Setlist & Logbook) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- LEFT COLUMN: The Metronome Stompbox (5 Cols) -->
+      <div class="lg:col-span-5 space-y-6">
+
+        <!-- STOMPBOX PEDAL UNIT -->
+        <div class="rack-panel rounded-xl p-6 sm:p-7 space-y-5">
+          <!-- Screws -->
+          <div class="screw screw-tl"></div>
+          <div class="screw screw-tr"></div>
+          <div class="screw screw-bl"></div>
+          <div class="screw screw-br"></div>
+
+          <!-- Stompbox Header -->
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <span class="font-rock text-xl tracking-wider text-electric-cyan">TEMPO CONTROL RIG</span>
+              <div class="text-[10px] font-mono text-slate-400">ANALOG-FEEL WEB AUDIO ENGINE</div>
+            </div>
+            <div class="flex items-center space-x-1.5">
+              <label for="timeSig" class="text-[11px] font-mono uppercase text-slate-400">METER:</label>
+              <select id="timeSig" class="bg-deep-950 font-mono text-xs text-electric-cyan font-bold border border-slate-700 rounded px-2 py-1 outline-none">
+                <option value="2">2/4 ROCK</option>
+                <option value="3">3/4 WALTZ</option>
+                <option value="4" selected>4/4 STRAIGHT</option>
+                <option value="6">6/8 BLUES/ALT</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Vintage Digital BPM Counter Display -->
+          <div class="bg-black/90 border-2 border-slate-800 rounded-lg p-5 text-center relative shadow-inner">
+            <div class="text-xs font-mono uppercase tracking-widest text-slate-500 flex justify-between px-2">
+              <span>BPM DIGITAL READOUT</span>
+              <span id="clickSoundLabel" class="text-blue-400 font-bold">CLICK: 880/440 Hz</span>
+            </div>
+            <div class="font-rock text-8xl tracking-tight text-white my-1 select-none flex items-center justify-center space-x-2" id="bpmDisplay">
+              120
+            </div>
+            <div class="text-xs font-mono uppercase tracking-wider text-electric-cyan" id="tempoName">
+              MODERATO (108 - 120 BPM)
+            </div>
+          </div>
+
+          <!-- PEDALBOARD LED PULSE ROW -->
+          <div>
+            <div class="text-[10px] font-mono uppercase tracking-widest text-slate-500 text-center mb-2">BEAT PULSE ARRAY</div>
+            <div class="flex justify-center items-center space-x-5 py-1" id="beatIndicators">
+              <!-- Dynamically rendered LEDs -->
+            </div>
+          </div>
+
+          <!-- BPM SLIDER & HARDWARE STEPPERS -->
+          <div class="space-y-3 pt-2">
+            <input type="range" id="bpmSlider" min="30" max="250" value="120" class="w-full cursor-pointer">
+            <div class="flex justify-between items-center text-xs font-mono text-slate-400">
+              <span class="text-slate-500">30 MIN</span>
+              <div class="flex space-x-1">
+                <button onclick="adjustBpm(-5)" class="px-2.5 py-1 bg-deep-900 hover:bg-blue-900 border border-slate-700 rounded font-mono text-xs text-slate-300 active:scale-95 transition">-5</button>
+                <button onclick="adjustBpm(-1)" class="px-2.5 py-1 bg-deep-900 hover:bg-blue-900 border border-slate-700 rounded font-mono text-xs text-slate-300 active:scale-95 transition">-1</button>
+                <button onclick="adjustBpm(1)" class="px-2.5 py-1 bg-deep-900 hover:bg-blue-900 border border-slate-700 rounded font-mono text-xs text-slate-300 active:scale-95 transition">+1</button>
+                <button onclick="adjustBpm(5)" class="px-2.5 py-1 bg-deep-900 hover:bg-blue-900 border border-slate-700 rounded font-mono text-xs text-slate-300 active:scale-95 transition">+5</button>
+              </div>
+              <span class="text-slate-500">250 MAX</span>
+            </div>
+          </div>
+
+          <!-- HEAVY STOMP BUTTONS -->
+          <div class="grid grid-cols-3 gap-3 pt-2">
+            <button id="playBtn" onclick="togglePlay()" 
+              class="col-span-2 stomp-btn py-4 px-4 rounded-lg font-rock text-2xl tracking-wider text-white flex items-center justify-center space-x-2">
+              <span id="playIcon">▶</span>
+              <span id="playText">ENGAGE METRONOME</span>
+            </button>
+            <button onclick="handleTapTempo()" 
+              class="stomp-btn py-4 px-2 rounded-lg flex flex-col items-center justify-center text-center">
+              <span class="text-[9px] font-mono text-slate-400 uppercase">FOOT / FINGER</span>
+              <span class="font-rock text-xl text-electric-cyan tracking-wider">TAP TEMPO</span>
+            </button>
+          </div>
+
+          <!-- PEDAL SETTINGS -->
+          <div class="flex items-center justify-between text-xs font-mono text-slate-400 pt-3 border-t border-slate-800">
+            <label class="flex items-center space-x-2 cursor-pointer select-none">
+              <input type="checkbox" id="accentBeat" checked class="accent-blue-500 w-4 h-4 rounded">
+              <span class="text-slate-300">ACCENT BEAT 1 (DOWNBEAT)</span>
+            </label>
+            <div class="flex items-center space-x-2">
+              <span>VOL:</span>
+              <input type="range" id="volumeControl" min="0" max="1" step="0.05" value="0.8" class="w-20">
+            </div>
+          </div>
+        </div>
+
+        <!-- CURRENT SESSION & SHRED TIMER -->
+        <div class="rack-panel rounded-xl p-5 space-y-4">
+          <div class="screw screw-tl"></div>
+          <div class="screw screw-tr"></div>
+          <div class="screw screw-bl"></div>
+          <div class="screw screw-br"></div>
+
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <span class="font-rock text-lg tracking-wider text-white">SESSION RECORDER</span>
+            <span id="timerDisplay" class="font-mono text-2xl font-extrabold text-electric-cyan bg-black/60 px-3 py-0.5 rounded border border-slate-800">00:00</span>
+          </div>
+
+          <!-- Active Track Tape Badge -->
+          <div class="p-3 bg-deep-950 border border-slate-800 rounded flex items-center justify-between">
+            <div class="min-w-0 pr-2">
+              <div class="text-[10px] font-mono text-slate-500 uppercase">ACTIVE SONG ON DECK:</div>
+              <div class="text-sm font-bold text-white truncate" id="activeSongTitle">FREE CHORD RIFFING (ซ้อมอิสระ)</div>
+              <div class="text-xs font-mono text-electric-cyan truncate mt-0.5" id="activeSongChords">NO CHORDS LOADED</div>
+            </div>
+            <button onclick="resetActiveSong()" class="text-[10px] font-mono px-2 py-1 bg-deep-900 border border-slate-700 hover:border-red-500 text-slate-400 hover:text-red-400 rounded">RESET</button>
+          </div>
+
+          <!-- Timer Controls -->
+          <div class="flex space-x-2">
+            <button id="startTimerBtn" onclick="toggleTimer()" class="flex-1 py-2 px-3 rounded bg-deep-850 hover:bg-blue-950 border border-blue-800 text-xs font-mono font-bold text-slate-200">
+              ▶ START SESSION CLOCK
+            </button>
+            <button onclick="resetTimer()" class="py-2 px-3 rounded bg-deep-900 border border-slate-800 text-xs font-mono text-slate-400 hover:text-white">
+              RESET CLOCK
+            </button>
+          </div>
+
+          <!-- Log Entry Form -->
+          <form id="logForm" onsubmit="submitPracticeLog(event)" class="space-y-3 pt-2 border-t border-slate-800">
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[10px] font-mono uppercase text-slate-400">DURATION (MINUTES):</label>
+                <input type="number" id="logDuration" min="1" max="600" value="15" required
+                  class="w-full bg-deep-950 border border-slate-700 rounded px-2.5 py-1.5 text-xs font-mono text-white outline-none focus:border-electric-cyan">
+              </div>
+              <div>
+                <label class="text-[10px] font-mono uppercase text-slate-400">EXECUTION / RATING:</label>
+                <select id="logRating" class="w-full bg-deep-950 border border-slate-700 rounded px-2.5 py-1.5 text-xs font-mono text-white outline-none focus:border-electric-cyan">
+                  <option value="5">⭐⭐⭐⭐⭐ FLAWLESS / PUNCHY</option>
+                  <option value="4" selected>⭐⭐⭐⭐ TIGHT & SOLID</option>
+                  <option value="3">⭐⭐⭐ DECENT / SLIGHT MISSES</option>
+                  <option value="2">⭐⭐ RUSHED / SLOW DOWN</option>
+                  <option value="1">⭐ NEEDS SLOW DRILL</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-[10px] font-mono uppercase text-slate-400">TECHNIQUE NOTES / PROGRESS:</label>
+              <input type="text" id="logNotes" placeholder="เช่น สลับคอร์ด Bm ไป F#m ตรงบาร์แรก, Palm Mute หนักแน่นขึ้น"
+                class="w-full bg-deep-950 border border-slate-700 rounded px-3 py-1.5 text-xs text-white outline-none focus:border-electric-cyan">
+            </div>
+
+            <button type="submit" class="w-full py-2.5 rounded bg-blue-600 hover:bg-blue-500 font-mono font-bold text-xs uppercase tracking-wider text-white shadow-lg shadow-blue-600/30 active:scale-[0.99] transition">
+              💾 LOG TO POSTGRESQL DATABASE
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: Song Repertoire & Practice History Logbook (7 Cols) -->
+      <div class="lg:col-span-7 space-y-6">
+
+        <!-- SETLIST / CHORD REPERTOIRE -->
+        <div class="rack-panel rounded-xl p-6 space-y-4">
+          <div class="screw screw-tl"></div>
+          <div class="screw screw-tr"></div>
+          <div class="screw screw-bl"></div>
+          <div class="screw screw-br"></div>
+
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <h2 class="font-rock text-xl tracking-wider text-white flex items-center space-x-2">
+                <span>🎸</span>
+                <span>SONG SETLIST & CHORD CHARTS</span>
+              </h2>
+              <p class="text-[10px] font-mono text-slate-400 uppercase">Target Speeds & Chord Progressions Saved in DB</p>
+            </div>
+            <button onclick="openSongModal()" class="px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-mono text-xs font-bold tracking-wider uppercase transition">
+              + NEW TRACK
+            </button>
+          </div>
+
+          <!-- Songs List -->
+          <div class="overflow-x-auto max-h-72 overflow-y-auto space-y-2.5 pr-1" id="songsList">
+            <div class="text-xs font-mono text-slate-500 py-6 text-center">LOADING SETLIST FROM POSTGRESQL...</div>
+          </div>
+        </div>
+
+        <!-- PRACTICE LOGBOOK (Tour / Studio Journal) -->
+        <div class="rack-panel rounded-xl p-6 space-y-4">
+          <div class="screw screw-tl"></div>
+          <div class="screw screw-tr"></div>
+          <div class="screw screw-bl"></div>
+          <div class="screw screw-br"></div>
+
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <h2 class="font-rock text-xl tracking-wider text-white flex items-center space-x-2">
+                <span>📓</span>
+                <span>PRACTICE LOGBOOK</span>
+              </h2>
+              <p class="text-[10px] font-mono text-slate-400 uppercase">Live Session Records from PostgreSQL</p>
+            </div>
+            <button onclick="fetchPracticeLogs()" class="text-xs font-mono text-blue-400 hover:text-white flex items-center space-x-1">
+              <span>[RE-SYNC]</span>
+            </button>
+          </div>
+
+          <!-- Logs Table -->
+          <div class="overflow-x-auto max-h-80 overflow-y-auto">
+            <table class="w-full text-left text-xs font-mono">
+              <thead class="text-slate-400 uppercase bg-black/60 sticky top-0 border-b border-slate-800 text-[10px]">
+                <tr>
+                  <th class="py-2 px-3">DATE / TIME</th>
+                  <th class="py-2 px-3">TRACK</th>
+                  <th class="py-2 px-3">BPM</th>
+                  <th class="py-2 px-3">TIME</th>
+                  <th class="py-2 px-3">RATING</th>
+                  <th class="py-2 px-3">NOTES</th>
+                  <th class="py-2 px-3 text-right">ACTION</th>
+                </tr>
+              </thead>
+              <tbody id="logsTableBody" class="divide-y divide-slate-800/80 text-slate-300">
+                <tr>
+                  <td colspan="7" class="py-6 text-center text-slate-500">NO LOGS LOGGED YET</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ADD / EDIT SONG MODAL -->
+  <div id="songModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="rack-panel max-w-md w-full rounded-xl p-6 space-y-4 border border-blue-700/80 shadow-2xl">
+      <div class="screw screw-tl"></div>
+      <div class="screw screw-tr"></div>
+      <div class="screw screw-bl"></div>
+      <div class="screw screw-br"></div>
+
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h3 class="font-rock text-xl text-white tracking-wider">ADD TRACK TO RIG</h3>
+        <button onclick="closeSongModal()" class="text-slate-400 hover:text-white font-mono text-base">&times;</button>
+      </div>
+
+      <form id="songForm" onsubmit="saveSong(event)" class="space-y-3 font-mono">
+        <div>
+          <label class="text-[10px] uppercase text-slate-400">TRACK TITLE *</label>
+          <input type="text" id="songTitleInput" required placeholder="e.g., Smells Like Teen Spirit"
+            class="w-full bg-deep-950 border border-slate-700 rounded px-3 py-1.5 text-xs text-white outline-none focus:border-electric-cyan">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-[10px] uppercase text-slate-400">ARTIST / BAND</label>
+            <input type="text" id="songArtistInput" placeholder="e.g., Nirvana"
+              class="w-full bg-deep-950 border border-slate-700 rounded px-3 py-1.5 text-xs text-white outline-none focus:border-electric-cyan">
+          </div>
+          <div>
+            <label class="text-[10px] uppercase text-slate-400">TARGET BPM *</label>
+            <input type="number" id="songBpmInput" min="30" max="250" value="116" required
+              class="w-full bg-deep-950 border border-slate-700 rounded px-3 py-1.5 text-xs text-white outline-none focus:border-electric-cyan">
+          </div>
+        </div>
+        <div>
+          <label class="text-[10px] uppercase text-slate-400">CHORD PROGRESSION (TAB / CHORDS)</label>
+          <input type="text" id="songChordsInput" placeholder="e.g., F5 - Bb5 - Ab5 - Db5"
+            class="w-full bg-deep-950 border border-slate-700 rounded px-3 py-1.5 text-xs text-white outline-none focus:border-electric-cyan">
+        </div>
+        <div>
+          <label class="text-[10px] uppercase text-slate-400">TUNING & PERFORMANCE NOTES</label>
+          <textarea id="songNotesInput" rows="2" placeholder="e.g., Standard E tuning, heavy distortion on chorus"
+            class="w-full bg-deep-950 border border-slate-700 rounded px-3 py-1.5 text-xs text-white outline-none focus:border-electric-cyan"></textarea>
+        </div>
+
+        <div class="flex space-x-2 pt-2">
+          <button type="button" onclick="closeSongModal()" class="flex-1 py-2 rounded bg-deep-900 border border-slate-700 text-slate-400 hover:text-white text-xs uppercase">CANCEL</button>
+          <button type="submit" class="flex-1 py-2 rounded bg-blue-600 hover:bg-blue-500 font-bold text-xs uppercase text-white tracking-wider">SAVE TRACK</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 py-4 bg-deep-950 text-center text-xs font-mono text-slate-500">
+    ALT-ROCK RIG &bull; INDUSTRIAL SOUND ENGINE &bull; DOCKERIZED NODE.JS & POSTGRESQL &bull; 2026
+  </footer>
+
+  <!-- Web Audio Metronome & Logic -->
+  <script>
+    let audioCtx = null;
+    let isPlaying = false;
+    let currentBeat = 0;
+    let beatsPerBar = 4;
+    let bpm = 120;
+    let lookahead = 25.0;
+    let scheduleAheadTime = 0.1;
+    let nextNoteTime = 0.0;
+    let timerID = null;
+
+    let activeSong = null;
+    let tapTimes = [];
+
+    let timerRunning = false;
+    let timerSeconds = 0;
+    let stopwatchInterval = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    // Precise synthesized woodblock/rimshot click using Web Audio API
+    function scheduleNote(beatNumber, time) {
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      const isAccent = (beatNumber === 0) && document.getElementById('accentBeat').checked;
+      const masterVol = parseFloat(document.getElementById('volumeControl').value);
+
+      // Pitch: 880Hz for Beat 1 accent, 440Hz for regular beats
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(isAccent ? 880 : 440, time);
+
+      gainNode.gain.setValueAtTime(masterVol, time);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.06);
+
+      osc.start(time);
+      osc.stop(time + 0.06);
+
+      const delayMs = Math.max(0, (time - audioCtx.currentTime) * 1000);
+      setTimeout(() => {
+        updateBeatVisuals(beatNumber);
+      }, delayMs);
+    }
+
+    function scheduler() {
+      while (nextNoteTime < audioCtx.currentTime + scheduleAheadTime) {
+        scheduleNote(currentBeat, nextNoteTime);
+        nextNote();
+      }
+      timerID = setTimeout(scheduler, lookahead);
+    }
+
+    function nextNote() {
+      const secondsPerBeat = 60.0 / bpm;
+      nextNoteTime += secondsPerBeat;
+      currentBeat = (currentBeat + 1) % beatsPerBar;
+    }
+
+    function togglePlay() {
+      initAudio();
+      isPlaying = !isPlaying;
+
+      const playBtn = document.getElementById('playBtn');
+      const playText = document.getElementById('playText');
+      const playIcon = document.getElementById('playIcon');
+
+      if (isPlaying) {
+        currentBeat = 0;
+        nextNoteTime = audioCtx.currentTime + 0.05;
+        scheduler();
+        playBtn.className = 'col-span-2 stomp-btn-stop py-4 px-4 rounded-lg font-rock text-2xl tracking-wider text-red-400 flex items-center justify-center space-x-2';
+        playText.textContent = 'DISENGAGE (STOP)';
+        playIcon.textContent = '⏹';
+      } else {
+        clearTimeout(timerID);
+        playBtn.className = 'col-span-2 stomp-btn py-4 px-4 rounded-lg font-rock text-2xl tracking-wider text-white flex items-center justify-center space-x-2';
+        playText.textContent = 'ENGAGE METRONOME';
+        playIcon.textContent = '▶';
+        clearBeatVisuals();
+      }
+    }
+
+    function updateBeatVisuals(beat) {
+      const leds = document.querySelectorAll('.pedal-led');
+      leds.forEach((led, idx) => {
+        led.classList.remove('led-active', 'led-accent');
+        if (idx === beat) {
+          if (beat === 0 && document.getElementById('accentBeat').checked) {
+            led.classList.add('led-accent');
+          } else {
+            led.classList.add('led-active');
+          }
+        }
+      });
+    }
+
+    function clearBeatVisuals() {
+      const leds = document.querySelectorAll('.pedal-led');
+      leds.forEach(led => led.classList.remove('led-active', 'led-accent'));
+    }
+
+    function renderBeatDots() {
+      const container = document.getElementById('beatIndicators');
+      container.innerHTML = '';
+      beatsPerBar = parseInt(document.getElementById('timeSig').value, 10);
+      for (let i = 0; i < beatsPerBar; i++) {
+        const wrap = document.createElement('div');
+        wrap.className = 'flex flex-col items-center space-y-1';
+        
+        const led = document.createElement('div');
+        led.className = 'pedal-led';
+        
+        const num = document.createElement('span');
+        num.className = 'text-[10px] font-mono font-bold text-slate-500';
+        num.textContent = i + 1;
+        
+        wrap.appendChild(led);
+        wrap.appendChild(num);
+        container.appendChild(wrap);
+      }
+    }
+
+    function setBpm(val) {
+      bpm = Math.min(250, Math.max(30, parseInt(val, 10)));
+      document.getElementById('bpmSlider').value = bpm;
+      document.getElementById('bpmDisplay').textContent = bpm;
+      updateTempoName(bpm);
+    }
+
+    function adjustBpm(delta) {
+      setBpm(bpm + delta);
+    }
+
+    function updateTempoName(val) {
+      let name = 'MODERATO';
+      if (val < 45) name = 'GRAVE (EXTREMELY SLOW)';
+      else if (val < 60) name = 'LARGO (SLOW & HEAVY)';
+      else if (val < 76) name = 'ADAGIO (CALM)';
+      else if (val < 108) name = 'ANDANTE (STEADY GROOVE)';
+      else if (val < 120) name = 'MODERATO (MID TEMPO)';
+      else if (val < 168) name = 'ALLEGRO (UPBEAT ROCK)';
+      else if (val < 200) name = 'VIVACE (FAST & ENERGETIC)';
+      else name = 'PRESTO (SPEED THRASH)';
+      document.getElementById('tempoName').textContent = `${name} (${val} BPM)`;
+    }
+
+    function handleTapTempo() {
+      const now = performance.now();
+      tapTimes.push(now);
+      if (tapTimes.length > 4) tapTimes.shift();
+
+      if (tapTimes.length >= 2) {
+        let diffs = [];
+        for (let i = 1; i < tapTimes.length; i++) {
+          diffs.push(tapTimes[i] - tapTimes[i - 1]);
+        }
+        const avgDiff = diffs.reduce((a, b) => a + b, 0) / diffs.length;
+        const calculatedBpm = Math.round(60000 / avgDiff);
+        if (calculatedBpm >= 30 && calculatedBpm <= 250) {
+          setBpm(calculatedBpm);
+        }
+      }
+    }
+
+    // Stopwatch logic
+    function toggleTimer() {
+      const btn = document.getElementById('startTimerBtn');
+      timerRunning = !timerRunning;
+      if (timerRunning) {
+        btn.textContent = '⏸ PAUSE SESSION CLOCK';
+        btn.classList.add('text-amber-400');
+        stopwatchInterval = setInterval(() => {
+          timerSeconds++;
+          const mins = Math.floor(timerSeconds / 60);
+          const secs = timerSeconds % 60;
+          document.getElementById('timerDisplay').textContent = 
+            `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+          document.getElementById('logDuration').value = Math.max(1, Math.round(timerSeconds / 60));
+        }, 1000);
+      } else {
+        clearInterval(stopwatchInterval);
+        btn.textContent = '▶ RESUME SESSION CLOCK';
+        btn.classList.remove('text-amber-400');
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(stopwatchInterval);
+      timerRunning = false;
+      timerSeconds = 0;
+      document.getElementById('timerDisplay').textContent = '00:00';
+      document.getElementById('startTimerBtn').textContent = '▶ START SESSION CLOCK';
+      document.getElementById('startTimerBtn').classList.remove('text-amber-400');
+    }
+
+    function selectSongToPractice(song) {
+      activeSong = song;
+      document.getElementById('activeSongTitle').textContent = `${song.title} ${song.artist ? '[' + song.artist + ']' : ''}`;
+      document.getElementById('activeSongChords').textContent = `CHORDS: ${song.chords || 'NO CHORDS'}`;
+      setBpm(song.target_bpm);
+      if (song.time_signature) {
+        const beats = parseInt(song.time_signature.split('/')[0], 10);
+        if ([2, 3, 4, 6].includes(beats)) {
+          document.getElementById('timeSig').value = beats;
+          renderBeatDots();
+        }
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetActiveSong() {
+      activeSong = null;
+      document.getElementById('activeSongTitle').textContent = 'FREE CHORD RIFFING (ซ้อมอิสระ)';
+      document.getElementById('activeSongChords').textContent = 'NO CHORDS LOADED';
+    }
+
+    // API calls
+    async function checkHealth() {
+      const led = document.getElementById('healthLed');
+      const text = document.getElementById('healthText');
+      try {
+        const res = await fetch('/api/health');
+        const data = await res.json();
+        if (data.status === 'ok' && data.database?.status === 'connected') {
+          led.className = 'w-2.5 h-2.5 rounded-full bg-electric-cyan shadow-[0_0_10px_#00e5ff]';
+          text.textContent = 'RIG ONLINE &bull; POSTGRESQL LOCKED';
+          text.className = 'text-xs font-mono font-semibold tracking-wider text-electric-cyan';
+        } else {
+          throw new Error('Database not ready');
+        }
+      } catch (e) {
+        led.className = 'w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_10px_#ef4444]';
+        text.textContent = 'DB OFFLINE / STANDBY';
+        text.className = 'text-xs font-mono font-semibold tracking-wider text-red-400';
+      }
+    }
+
+    async function fetchStats() {
+      try {
+        const res = await fetch('/api/stats');
+        const data = await res.json();
+        document.getElementById('statSongs').textContent = data.total_songs || 0;
+        document.getElementById('statSessions').textContent = data.total_sessions || 0;
+        document.getElementById('statMinutes').innerHTML = `${data.total_minutes || 0} <span class="text-sm font-sans font-normal text-slate-400">MINS</span>`;
+        document.getElementById('statAvgBpm').innerHTML = `${data.avg_bpm || 0} <span class="text-sm font-sans font-normal text-slate-400">BPM</span>`;
+      } catch (e) {
+        console.error('Failed to load stats', e);
+      }
+    }
+
+    async function fetchSongs() {
+      const container = document.getElementById('songsList');
+      try {
+        const res = await fetch('/api/songs');
+        const songs = await res.json();
+        if (!songs.length) {
+          container.innerHTML = '<div class="text-xs font-mono text-slate-500 py-6 text-center">NO TRACKS FOUND. HIT "+ NEW TRACK" TO ADD TO SETLIST.</div>';
+          return;
+        }
+
+        container.innerHTML = songs.map(s => `
+          <div class="p-3 bg-deep-950 border border-slate-800 rounded flex items-center justify-between hover:border-blue-700 transition">
+            <div class="flex-1 min-w-0 pr-3">
+              <div class="flex items-center space-x-2">
+                <span class="text-sm font-bold text-white tracking-wide truncate">${escapeHtml(s.title)}</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-950 text-electric-cyan border border-blue-800">${s.target_bpm} BPM</span>
+                <span class="text-[10px] font-mono text-slate-500">${s.time_signature || '4/4'}</span>
+              </div>
+              <div class="text-xs font-mono text-slate-400 truncate mt-0.5">${s.artist ? escapeHtml(s.artist) : 'UNKNOWN ARTIST'}</div>
+              ${s.chords ? `<div class="text-xs font-mono text-electric-cyan bg-blue-950/60 px-2 py-0.5 rounded mt-1.5 inline-block border border-blue-900/50">TAB: ${escapeHtml(s.chords)}</div>` : ''}
+            </div>
+            <div class="flex items-center space-x-2">
+              <button onclick='selectSongToPractice(${JSON.stringify(s).replace(/'/g, "&#39;")})'
+                class="px-3 py-1.5 rounded bg-blue-600/30 hover:bg-blue-600 text-blue-300 hover:text-white font-mono text-xs font-bold transition">
+                ⚡ LOAD
+              </button>
+              <button onclick="deleteSong(${s.id})" class="p-1.5 text-slate-500 hover:text-red-400 text-xs font-mono" title="DELETE TRACK">
+                ✕
+              </button>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        container.innerHTML = '<div class="text-xs font-mono text-red-400 py-4 text-center">FAILED TO LOAD TRACKS</div>';
+      }
+    }
+
+    async function fetchPracticeLogs() {
+      const tbody = document.getElementById('logsTableBody');
+      try {
+        const res = await fetch('/api/practice-logs');
+        const logs = await res.json();
+        if (!logs.length) {
+          tbody.innerHTML = '<tr><td colspan="7" class="py-6 text-center text-slate-500 font-mono">NO SESSIONS RECORDED YET</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = logs.map(l => {
+          const date = new Date(l.practiced_at).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
+          const stars = '⭐'.repeat(l.accuracy_rating || 5);
+          return `
+            <tr class="hover:bg-deep-900/60 border-b border-slate-800/60">
+              <td class="py-2.5 px-3 text-[11px] text-slate-400">${date}</td>
+              <td class="py-2.5 px-3 font-semibold text-white">${escapeHtml(l.song_title)}</td>
+              <td class="py-2.5 px-3 font-bold text-electric-cyan">${l.bpm_practiced}</td>
+              <td class="py-2.5 px-3">${l.duration_minutes} M</td>
+              <td class="py-2.5 px-3 text-[10px]">${stars}</td>
+              <td class="py-2.5 px-3 text-slate-400 truncate max-w-[150px]">${escapeHtml(l.notes || '-')}</td>
+              <td class="py-2.5 px-3 text-right">
+                <button onclick="deletePracticeLog(${l.id})" class="text-slate-500 hover:text-red-400 text-xs">[DEL]</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="7" class="py-4 text-center text-red-400 font-mono">FAILED TO LOAD LOGS</td></tr>';
+      }
+    }
+
+    async function submitPracticeLog(e) {
+      e.preventDefault();
+      const payload = {
+        song_id: activeSong ? activeSong.id : null,
+        song_title: activeSong ? activeSong.title : 'FREE CHORD RIFFING (ซ้อมอิสระ)',
+        bpm_practiced: bpm,
+        duration_minutes: parseInt(document.getElementById('logDuration').value, 10),
+        accuracy_rating: parseInt(document.getElementById('logRating').value, 10),
+        notes: document.getElementById('logNotes').value
+      };
+
+      try {
+        const res = await fetch('/api/practice-logs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          document.getElementById('logNotes').value = '';
+          resetTimer();
+          fetchPracticeLogs();
+          fetchStats();
+        }
+      } catch (err) {
+        alert('ERROR SAVING LOG');
+      }
+    }
+
+    async function deletePracticeLog(id) {
+      if (!confirm('DELETE THIS SESSION ENTRY?')) return;
+      try {
+        await fetch(`/api/practice-logs/${id}`, { method: 'DELETE' });
+        fetchPracticeLogs();
+        fetchStats();
+      } catch (e) {
+        alert('DELETE FAILED');
+      }
+    }
+
+    async function saveSong(e) {
+      e.preventDefault();
+      const payload = {
+        title: document.getElementById('songTitleInput').value.trim(),
+        artist: document.getElementById('songArtistInput').value.trim(),
+        target_bpm: parseInt(document.getElementById('songBpmInput').value, 10),
+        time_signature: '4/4',
+        chords: document.getElementById('songChordsInput').value.trim(),
+        notes: document.getElementById('songNotesInput').value.trim()
+      };
+
+      try {
+        const res = await fetch('/api/songs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          closeSongModal();
+          fetchSongs();
+          fetchStats();
+        }
+      } catch (err) {
+        alert('ERROR SAVING TRACK');
+      }
+    }
+
+    async function deleteSong(id) {
+      if (!confirm('DELETE THIS TRACK FROM SETLIST?')) return;
+      try {
+        await fetch(`/api/songs/${id}`, { method: 'DELETE' });
+        fetchSongs();
+        fetchStats();
+      } catch (e) {
+        alert('DELETE FAILED');
+      }
+    }
+
+    function openSongModal() {
+      document.getElementById('songForm').reset();
+      document.getElementById('songModal').classList.remove('hidden');
+    }
+
+    function closeSongModal() {
+      document.getElementById('songModal').classList.add('hidden');
+    }
+
+    function escapeHtml(string) {
+      if (!string) return '';
+      return String(string)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderBeatDots();
+      setBpm(120);
+
+      document.getElementById('bpmSlider').addEventListener('input', (e) => {
+        setBpm(e.target.value);
+      });
+
+      document.getElementById('timeSig').addEventListener('change', () => {
+        renderBeatDots();
+      });
+
+      checkHealth();
+      fetchStats();
+      fetchSongs();
+      fetchPracticeLogs();
+
+      setInterval(checkHealth, 5000);
+    });
+  </script>
+</body>
+</html>

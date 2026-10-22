@@ -1,0 +1,26 @@
+[
+  {
+    "id": 2,
+    "song_id": 1,
+    "song_title": "Canon in D (Rock Version)",
+    "bpm_practiced": 105,
+    "duration_minutes": 25,
+    "accuracy_rating": 5,
+    "notes": "ซ้อมความเร็ว 105 BPM ได้คล่องขึ้น เปลี่ยนคอร์ด Bm ไป F#m ตรงจังหวะ 1 พอดี เตรียมเพิ่มเป็น 110 BPM พรุ่งนี้",
+    "practiced_at": "2026-10-22T13:34:29.442Z",
+    "artist": "Johann Pachelbel",
+    "time_signature": "4/4"
+  },
+  {
+    "id": 1,
+    "song_id": 1,
+    "song_title": "Canon in D (Rock Version)",
+    "bpm_practiced": 105,
+    "duration_minutes": 25,
+    "accuracy_rating": 4,
+    "notes": "ฝึกสปีด 105 BPM ได้คล่องขึ้น สลับนิ้วคอร์ด Bm ไป F#m แม่นยำขึ้นมาก เหลือเก็บรายละเอียดท่อน Sweep Picking",
+    "practiced_at": "2026-10-22T13:33:23.699Z",
+    "artist": "Johann Pachelbel",
+    "time_signature": "4/4"
+  }
+]

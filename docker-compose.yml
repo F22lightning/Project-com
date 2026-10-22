@@ -1,0 +1,57 @@
+services:
+  # Database Service (PostgreSQL)
+  music-db:
+    image: postgres:15-alpine
+    container_name: music-db
+    environment:
+      POSTGRES_DB: music_practice_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    volumes:
+      - music_db_data:/var/lib/postgresql/data
+    networks:
+      - music-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d music_practice_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # Web Application Service (Node.js Express + Metronome UI)
+  music-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: music-app
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: music-db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres123
+      DB_NAME: music_practice_db
+    depends_on:
+      music-db:
+        condition: service_healthy
+    networks:
+      - music-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  music-network:
+    driver: bridge
+
+volumes:
+  music_db_data:
+    driver: local
