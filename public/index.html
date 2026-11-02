@@ -1604,115 +1604,191 @@
     });
 
     // -------------------------------------------------------------------------
-    // 10. API CALLS & REFRESH
+    // 10. API CALLS & SEAMLESS STANDALONE (LOCALSTORAGE) FALLBACK
     // -------------------------------------------------------------------------
+    let isDatabaseOnline = false;
+
+    const DEFAULT_GLOBAL_SONGS = [
+      { id: 1, title: 'Canon in D (Rock Version)', artist: 'Johann Pachelbel', target_bpm: 110, time_signature: '4/4', chords: 'D - A - Bm - F#m - G - D - G - A', notes: 'เน้นการดีด Alternate Picking และการเปลี่ยนคอร์ดให้ตรงจังหวะ 1', user_id: 'global' },
+      { id: 2, title: 'Hotel California (Acoustic Solo)', artist: 'Eagles', target_bpm: 75, time_signature: '4/4', chords: 'Bm - F# - A - E - G - D - Em - F#', notes: 'ฝึกซ้อม Hammer-on และ Pull-off ในช่วงท่อน Solo จังหวะ 75 BPM', user_id: 'global' },
+      { id: 3, title: 'Smells Like Teen Spirit', artist: 'Nirvana', target_bpm: 116, time_signature: '4/4', chords: 'F5 - Bb5 - Ab5 - Db5', notes: 'คอร์ด Power Chords ดีดเน้นจังหวะกระแทก (Strumming pattern)', user_id: 'global' }
+    ];
+
+    function getLocalSongs() {
+      const raw = localStorage.getItem('riffrig_songs_' + currentUserId);
+      if (!raw) {
+        localStorage.setItem('riffrig_songs_' + currentUserId, JSON.stringify(DEFAULT_GLOBAL_SONGS));
+        return DEFAULT_GLOBAL_SONGS;
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        return parsed.length ? parsed : DEFAULT_GLOBAL_SONGS;
+      } catch (e) {
+        return DEFAULT_GLOBAL_SONGS;
+      }
+    }
+
+    function saveLocalSongs(songs) {
+      localStorage.setItem('riffrig_songs_' + currentUserId, JSON.stringify(songs));
+    }
+
+    function getLocalLogs() {
+      const raw = localStorage.getItem('riffrig_logs_' + currentUserId);
+      if (!raw) return [];
+      try { return JSON.parse(raw); } catch (e) { return []; }
+    }
+
+    function saveLocalLogs(logs) {
+      localStorage.setItem('riffrig_logs_' + currentUserId, JSON.stringify(logs));
+    }
+
     async function checkHealth() {
       const led = document.getElementById('healthLed');
       const text = document.getElementById('healthText');
       try {
         const res = await apiFetch('/api/health');
-        const data = await res.json();
-        if (data.status === 'ok' && data.database?.status === 'connected') {
-          led.className = 'w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]';
-          text.textContent = 'ONLINE';
-          text.className = 'text-[10px] font-mono font-semibold tracking-wider text-cyan-300';
-        } else {
-          throw new Error('Database not ready');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.status === 'ok' && data.database?.status === 'connected') {
+            isDatabaseOnline = true;
+            led.className = 'w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]';
+            text.textContent = (currentLang === 'th') ? 'ออนไลน์ (DB)' : 'ONLINE (DB)';
+            text.className = 'text-[10px] font-mono font-semibold tracking-wider text-cyan-300';
+            return;
+          }
         }
       } catch (e) {
-        led.className = 'w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_#ef4444]';
-        text.textContent = 'OFFLINE';
-        text.className = 'text-[10px] font-mono font-semibold tracking-wider text-red-400';
+        // Fallback to standalone mode
       }
+
+      // Standalone Mode (Option 2): Electric Cyan LED & Clean Status
+      isDatabaseOnline = false;
+      led.className = 'w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]';
+      text.textContent = (currentLang === 'th') ? 'โหมดเครื่องเดี่ยว (LOCAL)' : 'STANDALONE RIG';
+      text.className = 'text-[10px] font-mono font-semibold tracking-wider text-cyan-300';
     }
 
     async function fetchStats() {
-      try {
-        const res = await apiFetch('/api/stats');
-        const data = await res.json();
-        document.getElementById('statSongs').textContent = data.total_songs || 0;
-        document.getElementById('statSessions').textContent = data.total_sessions || 0;
-        document.getElementById('statMinutes').innerHTML = `${data.total_minutes || 0} <span class="text-xs font-normal text-slate-400">${t('minsUnit')}</span>`;
-        document.getElementById('statAvgBpm').innerHTML = `${data.avg_bpm || 0} <span class="text-xs font-normal text-slate-400">BPM</span>`;
-      } catch (e) {
-        console.error('Failed to load stats', e);
+      if (isDatabaseOnline) {
+        try {
+          const res = await apiFetch('/api/stats');
+          if (res.ok) {
+            const data = await res.json();
+            document.getElementById('statSongs').textContent = data.total_songs || 0;
+            document.getElementById('statSessions').textContent = data.total_sessions || 0;
+            document.getElementById('statMinutes').innerHTML = `${data.total_minutes || 0} <span class="text-xs font-normal text-slate-400">${t('minsUnit')}</span>`;
+            document.getElementById('statAvgBpm').innerHTML = `${data.avg_bpm || 0} <span class="text-xs font-normal text-slate-400">BPM</span>`;
+            return;
+          }
+        } catch (e) {}
       }
+
+      // Local Stats Calculation
+      const songs = getLocalSongs();
+      const logs = getLocalLogs();
+      const totalMinutes = logs.reduce((acc, curr) => acc + (parseInt(curr.duration_minutes, 10) || 0), 0);
+      const avgBpm = logs.length ? Math.round(logs.reduce((acc, curr) => acc + (parseInt(curr.bpm_practiced, 10) || 0), 0) / logs.length) : 0;
+
+      document.getElementById('statSongs').textContent = songs.length;
+      document.getElementById('statSessions').textContent = logs.length;
+      document.getElementById('statMinutes').innerHTML = `${totalMinutes} <span class="text-xs font-normal text-slate-400">${t('minsUnit')}</span>`;
+      document.getElementById('statAvgBpm').innerHTML = `${avgBpm} <span class="text-xs font-normal text-slate-400">BPM</span>`;
     }
 
     async function fetchSongs() {
       const container = document.getElementById('songsList');
-      try {
-        const res = await apiFetch('/api/songs');
-        const songs = await res.json();
-        if (!songs.length) {
-          container.innerHTML = `<div class="text-xs font-mono text-slate-500 py-6 text-center">${t('noTracksFound')}</div>`;
-          return;
+      let songs = [];
+      if (isDatabaseOnline) {
+        try {
+          const res = await apiFetch('/api/songs');
+          if (res.ok) {
+            songs = await res.json();
+          } else {
+            throw new Error();
+          }
+        } catch (e) {
+          songs = getLocalSongs();
         }
-
-        container.innerHTML = songs.map(s => {
-          const isGlobal = (s.user_id === 'global');
-          return `
-            <div class="p-2.5 bg-chassis-950 border border-chassis-border rounded flex items-center justify-between hover:border-chassis-600 transition">
-              <div class="flex-1 min-w-0 pr-3">
-                <div class="flex items-center space-x-2">
-                  <span class="text-xs font-bold text-white tracking-wide truncate">${escapeHtml(s.title)}</span>
-                  <span class="px-1.5 py-0.2 rounded text-[9px] font-mono bg-chassis-900 text-cyan-300 border border-chassis-border">${s.target_bpm} BPM</span>
-                  <span class="text-[9px] font-mono text-slate-500">${s.time_signature || '4/4'}</span>
-                  ${isGlobal ? `<span class="text-[8px] font-mono px-1 py-0.2 rounded bg-chassis-850 text-slate-400 border border-chassis-border">${t('globalDemoTag')}</span>` : ''}
-                </div>
-                <div class="text-[11px] font-mono text-slate-400 truncate mt-0.5">${s.artist ? escapeHtml(s.artist) : 'Unknown'}</div>
-                ${s.chords ? `<div class="mt-1">${renderClickableChords(s.chords)}</div>` : ''}
-              </div>
-              <div class="flex items-center space-x-1.5">
-                <button onclick='selectSongToPractice(${JSON.stringify(s).replace(/'/g, "&#39;")})'
-                  class="px-2.5 py-1 rounded bg-chassis-900 hover:bg-cyan-500 hover:text-black text-cyan-300 border border-chassis-border font-mono text-xs font-bold transition">
-                  ${t('loadBtn')}
-                </button>
-                ${!isGlobal ? `
-                  <button onclick="deleteSong(${s.id})" class="p-1 text-slate-500 hover:text-red-400 text-xs font-mono" title="Delete Track">
-                    ✕
-                  </button>
-                ` : ''}
-              </div>
-            </div>
-          `;
-        }).join('');
-      } catch (e) {
-        container.innerHTML = '<div class="text-xs font-mono text-red-400 py-4 text-center">Failed to load songs</div>';
+      } else {
+        songs = getLocalSongs();
       }
+
+      if (!songs.length) {
+        container.innerHTML = `<div class="text-xs font-mono text-slate-500 py-6 text-center">${t('noTracksFound')}</div>`;
+        return;
+      }
+
+      container.innerHTML = songs.map(s => {
+        const isGlobal = (s.user_id === 'global');
+        return `
+          <div class="p-2.5 bg-chassis-950 border border-chassis-border rounded flex items-center justify-between hover:border-chassis-600 transition">
+            <div class="flex-1 min-w-0 pr-3">
+              <div class="flex items-center space-x-2">
+                <span class="text-xs font-bold text-white tracking-wide truncate">${escapeHtml(s.title)}</span>
+                <span class="px-1.5 py-0.2 rounded text-[9px] font-mono bg-chassis-900 text-cyan-300 border border-chassis-border">${s.target_bpm} BPM</span>
+                <span class="text-[9px] font-mono text-slate-500">${s.time_signature || '4/4'}</span>
+                ${isGlobal ? `<span class="text-[8px] font-mono px-1 py-0.2 rounded bg-chassis-850 text-slate-400 border border-chassis-border">${t('globalDemoTag')}</span>` : ''}
+              </div>
+              <div class="text-[11px] font-mono text-slate-400 truncate mt-0.5">${s.artist ? escapeHtml(s.artist) : 'Unknown'}</div>
+              ${s.chords ? `<div class="mt-1">${renderClickableChords(s.chords)}</div>` : ''}
+            </div>
+            <div class="flex items-center space-x-1.5">
+              <button onclick='selectSongToPractice(${JSON.stringify(s).replace(/'/g, "&#39;")})'
+                class="px-2.5 py-1 rounded bg-chassis-900 hover:bg-cyan-500 hover:text-black text-cyan-300 border border-chassis-border font-mono text-xs font-bold transition">
+                ${t('loadBtn')}
+              </button>
+              ${!isGlobal ? `
+                <button onclick="deleteSong(${s.id})" class="p-1 text-slate-500 hover:text-red-400 text-xs font-mono" title="Delete Track">
+                  ✕
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     async function fetchPracticeLogs() {
       const tbody = document.getElementById('logsTableBody');
-      try {
-        const res = await apiFetch('/api/practice-logs');
-        const logs = await res.json();
-        if (!logs.length) {
-          tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-500 font-mono">${t('noLogsMsg')}</td></tr>`;
-          return;
+      let logs = [];
+      if (isDatabaseOnline) {
+        try {
+          const res = await apiFetch('/api/practice-logs');
+          if (res.ok) {
+            logs = await res.json();
+          } else {
+            throw new Error();
+          }
+        } catch (e) {
+          logs = getLocalLogs();
         }
-
-        tbody.innerHTML = logs.map(l => {
-          const locale = (currentLang === 'th') ? 'th-TH' : 'en-US';
-          const date = new Date(l.practiced_at).toLocaleString(locale, { dateStyle: 'short', timeStyle: 'short' });
-          const stars = '⭐'.repeat(l.accuracy_rating || 5);
-          return `
-            <tr class="hover:bg-chassis-900 border-b border-chassis-border">
-              <td class="py-2 px-3 text-[10px] text-slate-400">${date}</td>
-              <td class="py-2 px-3 font-semibold text-white text-xs">${escapeHtml(l.song_title)}</td>
-              <td class="py-2 px-3 font-bold text-cyan-300 font-mono">${l.bpm_practiced}</td>
-              <td class="py-2 px-3 font-mono">${l.duration_minutes} M</td>
-              <td class="py-2 px-3 text-[9px]">${stars}</td>
-              <td class="py-2 px-3 text-slate-400 truncate max-w-[140px] text-[11px]">${escapeHtml(l.notes || '-')}</td>
-              <td class="py-2 px-3 text-right">
-                <button onclick="deletePracticeLog(${l.id})" class="text-slate-500 hover:text-red-400 text-xs">${t('delBtn')}</button>
-              </td>
-            </tr>
-          `;
-        }).join('');
-      } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="7" class="py-4 text-center text-red-400 font-mono">Failed to load logs</td></tr>';
+      } else {
+        logs = getLocalLogs();
       }
+
+      if (!logs.length) {
+        tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-500 font-mono">${t('noLogsMsg')}</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = logs.map(l => {
+        const locale = (currentLang === 'th') ? 'th-TH' : 'en-US';
+        const date = new Date(l.practiced_at).toLocaleString(locale, { dateStyle: 'short', timeStyle: 'short' });
+        const stars = '⭐'.repeat(l.accuracy_rating || 5);
+        return `
+          <tr class="hover:bg-chassis-900 border-b border-chassis-border">
+            <td class="py-2 px-3 text-[10px] text-slate-400">${date}</td>
+            <td class="py-2 px-3 font-semibold text-white text-xs">${escapeHtml(l.song_title)}</td>
+            <td class="py-2 px-3 font-bold text-cyan-300 font-mono">${l.bpm_practiced}</td>
+            <td class="py-2 px-3 font-mono">${l.duration_minutes} M</td>
+            <td class="py-2 px-3 text-[9px]">${stars}</td>
+            <td class="py-2 px-3 text-slate-400 truncate max-w-[140px] text-[11px]">${escapeHtml(l.notes || '-')}</td>
+            <td class="py-2 px-3 text-right">
+              <button onclick="deletePracticeLog(${l.id})" class="text-slate-500 hover:text-red-400 text-xs">${t('delBtn')}</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     async function submitPracticeLog(e) {
@@ -1726,32 +1802,58 @@
         notes: document.getElementById('logNotes').value
       };
 
-      try {
-        const res = await apiFetch('/api/practice-logs', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        if (res.ok) {
-          document.getElementById('logNotes').value = '';
-          resetTimer();
-          fetchPracticeLogs();
-          fetchStats();
-        }
-      } catch (err) {
-        alert('Error saving log');
+      let savedRemotely = false;
+      if (isDatabaseOnline) {
+        try {
+          const res = await apiFetch('/api/practice-logs', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) savedRemotely = true;
+        } catch (err) {}
       }
+
+      // If offline or on Vercel standalone, store locally
+      if (!savedRemotely) {
+        const logs = getLocalLogs();
+        const newEntry = {
+          ...payload,
+          id: Date.now(),
+          practiced_at: new Date().toISOString(),
+          user_id: currentUserId,
+          user_name: currentUserName
+        };
+        logs.unshift(newEntry);
+        saveLocalLogs(logs);
+      }
+
+      document.getElementById('logNotes').value = '';
+      resetTimer();
+      fetchPracticeLogs();
+      fetchStats();
     }
 
     async function deletePracticeLog(id) {
-      if (!confirm('ยืนยันลบประวัติการซ้อมนี้? / Delete this log entry?')) return;
-      try {
-        await apiFetch(`/api/practice-logs/${id}`, { method: 'DELETE' });
-        fetchPracticeLogs();
-        fetchStats();
-      } catch (e) {
-        alert('Delete failed');
+      const confirmMsg = (currentLang === 'th') ? 'ยืนยันลบประวัติการซ้อมนี้?' : 'Delete this log entry?';
+      if (!confirm(confirmMsg)) return;
+
+      if (isDatabaseOnline) {
+        try {
+          const res = await apiFetch(`/api/practice-logs/${id}`, { method: 'DELETE' });
+          if (res.ok) {
+            fetchPracticeLogs();
+            fetchStats();
+            return;
+          }
+        } catch (e) {}
       }
+
+      // Local fallback
+      const logs = getLocalLogs().filter(l => l.id !== id);
+      saveLocalLogs(logs);
+      fetchPracticeLogs();
+      fetchStats();
     }
 
     async function saveSong(e) {
@@ -1765,36 +1867,55 @@
         notes: document.getElementById('songNotesInput').value.trim()
       };
 
-      try {
-        const res = await apiFetch('/api/songs', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        if (res.ok) {
-          closeSongModal();
-          fetchSongs();
-          fetchStats();
-        }
-      } catch (err) {
-        alert('Error saving song');
+      let savedRemotely = false;
+      if (isDatabaseOnline) {
+        try {
+          const res = await apiFetch('/api/songs', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) savedRemotely = true;
+        } catch (err) {}
       }
+
+      if (!savedRemotely) {
+        const local = getLocalSongs();
+        const newSong = {
+          ...payload,
+          id: Date.now(),
+          user_id: currentUserId,
+          user_name: currentUserName,
+          created_at: new Date().toISOString()
+        };
+        local.unshift(newSong);
+        saveLocalSongs(local);
+      }
+
+      closeSongModal();
+      fetchSongs();
+      fetchStats();
     }
 
     async function deleteSong(id) {
-      if (!confirm('ยืนยันลบเพลงนี้ออกจากคลัง? / Delete this track?')) return;
-      try {
-        const res = await apiFetch(`/api/songs/${id}`, { method: 'DELETE' });
-        if (!res.ok) {
-          const err = await res.json();
-          alert(err.error || 'Delete failed');
-          return;
-        }
-        fetchSongs();
-        fetchStats();
-      } catch (e) {
-        alert('Delete failed');
+      const confirmMsg = (currentLang === 'th') ? 'ยืนยันลบเพลงนี้ออกจากคลัง?' : 'Delete this track from repertoire?';
+      if (!confirm(confirmMsg)) return;
+
+      if (isDatabaseOnline) {
+        try {
+          const res = await apiFetch(`/api/songs/${id}`, { method: 'DELETE' });
+          if (res.ok) {
+            fetchSongs();
+            fetchStats();
+            return;
+          }
+        } catch (e) {}
       }
+
+      const local = getLocalSongs().filter(s => s.id !== id);
+      saveLocalSongs(local);
+      fetchSongs();
+      fetchStats();
     }
 
     function openSongModal() {
@@ -1807,22 +1928,42 @@
     }
 
     async function exportLogsCSV() {
-      try {
-        const res = await apiFetch('/api/export-logs');
-        if (!res.ok) throw new Error('Export failed');
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        a.download = `practice_logs_${currentUserName.replace(/\s+/g, '_')}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      } catch (e) {
-        alert('Export failed: ' + e.message);
+      if (isDatabaseOnline) {
+        try {
+          const res = await apiFetch('/api/export-logs');
+          if (res.ok) {
+            const blob = await res.blob();
+            downloadBlob(blob, `practice_logs_${currentUserName.replace(/\s+/g, '_')}.csv`);
+            return;
+          }
+        } catch (e) {}
       }
+
+      // Standalone CSV export
+      const logs = getLocalLogs();
+      let csvContent = '\uFEFF"Session ID","Date / Time","Song Title","BPM","Duration (Mins)","Rating (1-5)","Musician","Notes"\r\n';
+      logs.forEach((row, idx) => {
+        const dateStr = new Date(row.practiced_at).toISOString();
+        const cleanTitle = `"${(row.song_title || '').replace(/"/g, '""')}"`;
+        const cleanNotes = `"${(row.notes || '').replace(/"/g, '""')}"`;
+        const cleanUser = `"${(row.user_name || currentUserName).replace(/"/g, '""')}"`;
+        csvContent += `${row.id || idx + 1},"${dateStr}",${cleanTitle},${row.bpm_practiced},${row.duration_minutes},${row.accuracy_rating},${cleanUser},${cleanNotes}\r\n`;
+      });
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      downloadBlob(blob, `practice_logs_${currentUserName.replace(/\s+/g, '_')}.csv`);
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
     }
 
     function escapeHtml(string) {
