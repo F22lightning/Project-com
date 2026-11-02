@@ -1,13 +1,25 @@
 {
-  "name": "music-practice-metronome",
-  "version": "1.0.0",
-  "description": "Music Practice & Metronome Web Application with PostgreSQL & Docker",
+  "name": "riffrig-rock-metronome",
+  "version": "1.1.0",
+  "description": "RiffRig: Alt-Rock Metronome & Practice Workstation with Web Audio API, PostgreSQL & Docker",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "keywords": ["music", "metronome", "practice", "guitar", "chords", "bpm", "docker", "express"],
-  "author": "Antigravity Pair Programmer",
+  "keywords": [
+    "music",
+    "metronome",
+    "guitar",
+    "speed-trainer",
+    "chords",
+    "fretboard",
+    "practice-log",
+    "rock",
+    "docker",
+    "express",
+    "postgresql"
+  ],
+  "author": "Phattharaphon",
   "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",

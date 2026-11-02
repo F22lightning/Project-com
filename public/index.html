@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ALT-ROCK RIG &bull; Metronome & Practice Log</title>
+  <meta name="theme-color" content="#00e5ff">
+  <title>RIFFRIG &bull; Alt-Rock Metronome & Practice Workstation</title>
+  <link rel="manifest" href="/manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;600;800&family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;600;700;800&family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -49,7 +51,7 @@
     body {
       background-color: var(--bg-dark);
       background-image: 
-        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(37, 99, 235, 0.18), transparent 70%),
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(37, 99, 235, 0.22), transparent 70%),
         repeating-linear-gradient(45deg, rgba(14, 29, 66, 0.15) 0, rgba(14, 29, 66, 0.15) 1px, transparent 0, transparent 24px);
       color: #e2e8f0;
       font-family: 'Prompt', sans-serif;
@@ -59,41 +61,28 @@
     .rack-panel {
       background: linear-gradient(180deg, #0d1a36 0%, #071022 100%);
       border: 1px solid #1e3a6d;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 32px -8px rgba(0, 0, 0, 0.85);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 14px 36px -8px rgba(0, 0, 0, 0.9);
       position: relative;
     }
 
     /* Industrial Screw Details in Corners */
     .screw {
-      width: 7px;
-      height: 7px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: #2a3c5a;
       box-shadow: inset 0 1px 1px rgba(0,0,0,0.8), 0 1px 0 rgba(255,255,255,0.15);
       position: absolute;
     }
-    .screw-tl { top: 8px; left: 8px; }
-    .screw-tr { top: 8px; right: 8px; }
-    .screw-bl { bottom: 8px; left: 8px; }
-    .screw-br { bottom: 8px; right: 8px; }
-
-    /* Tape / Stamped Label look */
-    .masking-tape {
-      background: #e2e8f0;
-      color: #050b18;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      box-shadow: 1px 2px 5px rgba(0,0,0,0.4);
-      display: inline-block;
-      transform: rotate(-0.5deg);
-    }
+    .screw-tl { top: 9px; left: 9px; }
+    .screw-tr { top: 9px; right: 9px; }
+    .screw-bl { bottom: 9px; left: 9px; }
+    .screw-br { bottom: 9px; right: 9px; }
 
     /* Pedalboard LED Beat Indicators */
     .pedal-led {
-      width: 22px;
-      height: 22px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       background: #091326;
       border: 2px solid #1a2f5a;
@@ -105,8 +94,8 @@
       position: absolute;
       top: 3px;
       left: 3px;
-      width: 6px;
-      height: 6px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: rgba(255,255,255,0.25);
     }
@@ -115,12 +104,12 @@
     .led-active {
       background: #00e5ff !important;
       border-color: #ffffff !important;
-      box-shadow: 0 0 18px #00e5ff, 0 0 35px rgba(0, 229, 255, 0.6) !important;
+      box-shadow: 0 0 20px #00e5ff, 0 0 38px rgba(0, 229, 255, 0.7) !important;
     }
     .led-accent {
       background: #3b82f6 !important;
       border-color: #93c5fd !important;
-      box-shadow: 0 0 22px #3b82f6, 0 0 45px rgba(59, 130, 246, 0.8) !important;
+      box-shadow: 0 0 25px #3b82f6, 0 0 50px rgba(59, 130, 246, 0.85) !important;
     }
 
     /* Tactile Stomp Switch */
@@ -145,12 +134,7 @@
       box-shadow: 0 2px 0 #050811, 0 4px 8px rgba(0,0,0,0.6);
     }
 
-    /* Grunge Grid Lines */
-    .grit-border {
-      border: 1px solid rgba(56, 189, 248, 0.18);
-    }
-
-    /* Custom Range Slider (Electric Blue Track) */
+    /* Custom Range Slider */
     input[type=range] {
       -webkit-appearance: none;
       background: #060e20;
@@ -168,12 +152,38 @@
       cursor: pointer;
       box-shadow: 0 0 10px rgba(0, 229, 255, 0.8);
     }
+
+    /* Chord Pill clickable hover */
+    .chord-pill {
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .chord-pill:hover {
+      background: #00e5ff;
+      color: #050b18;
+      box-shadow: 0 0 10px #00e5ff;
+      transform: translateY(-1px);
+    }
+
+    /* Key Badge */
+    .kbd-badge {
+      display: inline-block;
+      padding: 1px 6px;
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      background: #091326;
+      border: 1px solid #1e3a6d;
+      border-radius: 4px;
+      color: #38bdf8;
+      box-shadow: 0 2px 0 #050811;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-electric-blue selection:text-black">
 
   <!-- TOP HEADER / AMP RACK BAR -->
-  <header class="border-b-2 border-slate-800/90 bg-deep-950/90 backdrop-blur sticky top-0 z-40">
+  <header class="border-b-2 border-slate-800/90 bg-deep-950/95 backdrop-blur sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       
       <!-- Logo / Rig Brand -->
@@ -183,18 +193,33 @@
         </div>
         <div>
           <div class="flex items-center space-x-2">
-            <span class="font-rock text-2xl tracking-wider text-white">ALT-ROCK RIG</span>
-            <span class="text-[10px] font-mono tracking-widest px-1.5 py-0.5 rounded bg-blue-950/80 text-electric-cyan border border-blue-800">METRONOME &bull; PEDAL</span>
+            <span class="font-rock text-2xl tracking-wider text-white">RIFFRIG</span>
+            <span class="text-[10px] font-mono tracking-widest px-1.5 py-0.5 rounded bg-blue-950/80 text-electric-cyan border border-blue-800">ALT-ROCK ENGINE</span>
           </div>
-          <p class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">Electric Guitar & Bass Practice Workstation</p>
+          <p class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Multi-User Guitar & Bass Practice Workstation</p>
         </div>
       </div>
 
-      <!-- Rig Status Indicator (Vintage Amp Style) -->
-      <div class="flex items-center space-x-4">
-        <div id="healthBadge" class="flex items-center space-x-2 px-3 py-1 rounded bg-deep-900 border border-slate-800">
-          <span id="healthLed" class="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6]"></span>
-          <span id="healthText" class="text-xs font-mono font-semibold tracking-wider text-slate-300">STANDBY / CONNECTING</span>
+      <!-- User Profile & Rig Status Indicator -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <!-- Screen Wake Lock Indicator -->
+        <div id="wakeLockBadge" class="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded bg-deep-900 border border-slate-800 text-[10px] font-mono text-slate-400" title="Keeps your screen awake while practicing">
+          <span class="w-2 h-2 rounded-full bg-slate-600" id="wakeLockDot"></span>
+          <span id="wakeLockText">SCREEN AWAKE: OFF</span>
+        </div>
+
+        <!-- Musician Profile Pill (Separates data for each user) -->
+        <button onclick="openProfileModal()" class="flex items-center space-x-2 px-3 py-1 rounded bg-deep-900 hover:bg-blue-950 border border-blue-800 text-xs font-mono text-slate-200 transition">
+          <span class="w-2 h-2 rounded-full bg-electric-cyan animate-pulse"></span>
+          <span class="text-slate-400">USER:</span>
+          <span id="activeUserName" class="font-bold text-electric-glow truncate max-w-[100px] sm:max-w-[140px]">Rocker</span>
+          <span class="text-[10px] text-blue-400">[SWITCH]</span>
+        </button>
+
+        <!-- System Health LED -->
+        <div id="healthBadge" class="hidden md:flex items-center space-x-2 px-2.5 py-1 rounded bg-deep-900 border border-slate-800 text-xs font-mono">
+          <span id="healthLed" class="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6]"></span>
+          <span id="healthText" class="text-[11px] text-slate-400">ONLINE</span>
         </div>
       </div>
 
@@ -207,28 +232,28 @@
     <!-- RACK STATS STRIP -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
       <div class="rack-panel rounded-lg p-3.5 border-l-4 border-l-blue-500">
-        <div class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">SONGS IN REPERTOIRE</div>
+        <div class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">TRACKS IN SETLIST</div>
         <div class="text-3xl font-rock tracking-wider text-white mt-0.5" id="statSongs">0</div>
-        <div class="text-[10px] text-slate-500 font-mono mt-0.5">🎸 TRACKS READY</div>
+        <div class="text-[10px] text-slate-500 font-mono mt-0.5">🎸 REPERTOIRE READY</div>
       </div>
       <div class="rack-panel rounded-lg p-3.5 border-l-4 border-l-electric-cyan">
-        <div class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">PRACTICE ROUNDS</div>
+        <div class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">PRACTICE RUNS</div>
         <div class="text-3xl font-rock tracking-wider text-electric-cyan mt-0.5" id="statSessions">0</div>
-        <div class="text-[10px] text-slate-500 font-mono mt-0.5">⏱️ COMPLETED RUNS</div>
+        <div class="text-[10px] text-slate-500 font-mono mt-0.5">⏱️ COMPLETED DRILLS</div>
       </div>
       <div class="rack-panel rounded-lg p-3.5 border-l-4 border-l-indigo-500">
-        <div class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">TOTAL LOGGED TIME</div>
+        <div class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">TOTAL SHRED TIME</div>
         <div class="text-3xl font-rock tracking-wider text-blue-400 mt-0.5" id="statMinutes">0 <span class="text-sm font-sans font-normal text-slate-400">MINS</span></div>
-        <div class="text-[10px] text-slate-500 font-mono mt-0.5">⏳ SHRED ACCUMULATION</div>
+        <div class="text-[10px] text-slate-500 font-mono mt-0.5">⏳ ACCUMULATED RUNTIME</div>
       </div>
       <div class="rack-panel rounded-lg p-3.5 border-l-4 border-l-sky-400">
         <div class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">AVERAGE TEMPO</div>
         <div class="text-3xl font-rock tracking-wider text-electric-glow mt-0.5" id="statAvgBpm">0 <span class="text-sm font-sans font-normal text-slate-400">BPM</span></div>
-        <div class="text-[10px] text-slate-500 font-mono mt-0.5">⚡ SPEED LOCK</div>
+        <div class="text-[10px] text-slate-500 font-mono mt-0.5">⚡ CURRENT SPEED LOCK</div>
       </div>
     </div>
 
-    <!-- MAIN TWO-COLUMN RIG (Left: Stomp Metronome & Session Logger, Right: Setlist & Logbook) -->
+    <!-- MAIN TWO-COLUMN RIG (Left: Stomp Metronome & Speed Trainer, Right: Setlist & Logbook) -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
       <!-- LEFT COLUMN: The Metronome Stompbox (5 Cols) -->
@@ -242,15 +267,23 @@
           <div class="screw screw-bl"></div>
           <div class="screw screw-br"></div>
 
-          <!-- Stompbox Header -->
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <!-- Stompbox Header: Meter & Sound Pack Selector -->
+          <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-2">
             <div>
               <span class="font-rock text-xl tracking-wider text-electric-cyan">TEMPO CONTROL RIG</span>
-              <div class="text-[10px] font-mono text-slate-400">ANALOG-FEEL WEB AUDIO ENGINE</div>
+              <div class="text-[10px] font-mono text-slate-400">ANALOG SYNTH AUDIO ENGINE</div>
             </div>
-            <div class="flex items-center space-x-1.5">
-              <label for="timeSig" class="text-[11px] font-mono uppercase text-slate-400">METER:</label>
-              <select id="timeSig" class="bg-deep-950 font-mono text-xs text-electric-cyan font-bold border border-slate-700 rounded px-2 py-1 outline-none">
+            <div class="flex items-center space-x-2">
+              <!-- Sound Kit Selector -->
+              <select id="soundKitSelect" onchange="changeSoundKit(this.value)" class="bg-deep-950 font-mono text-xs text-electric-cyan font-bold border border-slate-700 rounded px-2 py-1 outline-none">
+                <option value="woodblock" selected>🪵 WOODBLOCK</option>
+                <option value="cowbell">🔔 ROCK COWBELL</option>
+                <option value="rimshot">🥁 RIMSHOT CLICK</option>
+                <option value="beep">🤖 CYBER BEEP</option>
+              </select>
+
+              <!-- Meter Time Signature -->
+              <select id="timeSig" class="bg-deep-950 font-mono text-xs text-slate-300 font-bold border border-slate-700 rounded px-2 py-1 outline-none">
                 <option value="2">2/4 ROCK</option>
                 <option value="3">3/4 WALTZ</option>
                 <option value="4" selected>4/4 STRAIGHT</option>
@@ -263,7 +296,7 @@
           <div class="bg-black/90 border-2 border-slate-800 rounded-lg p-5 text-center relative shadow-inner">
             <div class="text-xs font-mono uppercase tracking-widest text-slate-500 flex justify-between px-2">
               <span>BPM DIGITAL READOUT</span>
-              <span id="clickSoundLabel" class="text-blue-400 font-bold">CLICK: 880/440 Hz</span>
+              <span id="clickSoundLabel" class="text-blue-400 font-bold">KIT: WOODBLOCK</span>
             </div>
             <div class="font-rock text-8xl tracking-tight text-white my-1 select-none flex items-center justify-center space-x-2" id="bpmDisplay">
               120
@@ -296,8 +329,52 @@
             </div>
           </div>
 
+          <!-- ⚡ SPEED TRAINER SUB-PANEL (AUTO-ACCELERATE) -->
+          <div class="bg-deep-950/80 border border-slate-800 rounded-lg p-3.5 space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="flex items-center space-x-2 cursor-pointer select-none">
+                <input type="checkbox" id="speedTrainerActive" onchange="toggleSpeedTrainerUI()" class="accent-electric-glow w-4 h-4 rounded">
+                <span class="font-rock text-lg tracking-wider text-electric-glow">⚡ SPEED TRAINER (AUTO ACCEL)</span>
+              </label>
+              <span id="speedTrainerBadge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-deep-900 text-slate-500 border border-slate-800">OFF</span>
+            </div>
+
+            <!-- Trainer Controls (Collapsed when inactive) -->
+            <div id="speedTrainerControls" class="space-y-2.5 pt-1 text-xs font-mono hidden">
+              <div class="grid grid-cols-3 gap-2">
+                <div>
+                  <label class="text-[10px] text-slate-400">TARGET BPM:</label>
+                  <input type="number" id="trainerTargetBpm" value="140" min="40" max="250" class="w-full bg-deep-900 border border-slate-700 rounded px-2 py-1 text-electric-cyan font-bold outline-none">
+                </div>
+                <div>
+                  <label class="text-[10px] text-slate-400">ADD BPM:</label>
+                  <select id="trainerStepBpm" class="w-full bg-deep-900 border border-slate-700 rounded px-2 py-1 text-white outline-none">
+                    <option value="2">+2 BPM</option>
+                    <option value="5" selected>+5 BPM</option>
+                    <option value="10">+10 BPM</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-[10px] text-slate-400">EVERY BARS:</label>
+                  <select id="trainerIntervalBars" class="w-full bg-deep-900 border border-slate-700 rounded px-2 py-1 text-white outline-none">
+                    <option value="2">2 BARS</option>
+                    <option value="4" selected>4 BARS</option>
+                    <option value="8">8 BARS</option>
+                    <option value="16">16 BARS</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Bar Counter & Next Bump Display -->
+              <div class="flex items-center justify-between bg-black/60 px-3 py-1.5 rounded border border-slate-800/80 text-[11px]">
+                <span class="text-slate-400">BARS COMPLETED: <span id="trainerBarCount" class="text-white font-bold">0 / 4</span></span>
+                <span id="trainerStatusMsg" class="text-electric-cyan">ACCEL: READY</span>
+              </div>
+            </div>
+          </div>
+
           <!-- HEAVY STOMP BUTTONS -->
-          <div class="grid grid-cols-3 gap-3 pt-2">
+          <div class="grid grid-cols-3 gap-3 pt-1">
             <button id="playBtn" onclick="togglePlay()" 
               class="col-span-2 stomp-btn py-4 px-4 rounded-lg font-rock text-2xl tracking-wider text-white flex items-center justify-center space-x-2">
               <span id="playIcon">▶</span>
@@ -305,7 +382,7 @@
             </button>
             <button onclick="handleTapTempo()" 
               class="stomp-btn py-4 px-2 rounded-lg flex flex-col items-center justify-center text-center">
-              <span class="text-[9px] font-mono text-slate-400 uppercase">FOOT / FINGER</span>
+              <span class="text-[9px] font-mono text-slate-400 uppercase">FOOT / FINGER [T]</span>
               <span class="font-rock text-xl text-electric-cyan tracking-wider">TAP TEMPO</span>
             </button>
           </div>
@@ -405,7 +482,7 @@
                 <span>🎸</span>
                 <span>SONG SETLIST & CHORD CHARTS</span>
               </h2>
-              <p class="text-[10px] font-mono text-slate-400 uppercase">Target Speeds & Chord Progressions Saved in DB</p>
+              <p class="text-[10px] font-mono text-slate-400 uppercase">Click any chord to open interactive guitar fretboard diagram</p>
             </div>
             <button onclick="openSongModal()" class="px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-mono text-xs font-bold tracking-wider uppercase transition">
               + NEW TRACK
@@ -425,17 +502,22 @@
           <div class="screw screw-bl"></div>
           <div class="screw screw-br"></div>
 
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-3 gap-2">
             <div>
               <h2 class="font-rock text-xl tracking-wider text-white flex items-center space-x-2">
                 <span>📓</span>
                 <span>PRACTICE LOGBOOK</span>
               </h2>
-              <p class="text-[10px] font-mono text-slate-400 uppercase">Live Session Records from PostgreSQL</p>
+              <p class="text-[10px] font-mono text-slate-400 uppercase">Filtered for your musician profile &bull; Stored in PostgreSQL</p>
             </div>
-            <button onclick="fetchPracticeLogs()" class="text-xs font-mono text-blue-400 hover:text-white flex items-center space-x-1">
-              <span>[RE-SYNC]</span>
-            </button>
+            <div class="flex items-center space-x-2">
+              <button onclick="exportLogsCSV()" class="px-2.5 py-1 rounded bg-deep-900 hover:bg-blue-900 border border-slate-700 text-xs font-mono text-electric-cyan font-semibold flex items-center space-x-1 transition">
+                <span>📥 EXPORT CSV</span>
+              </button>
+              <button onclick="fetchPracticeLogs()" class="px-2.5 py-1 rounded bg-deep-900 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-400 hover:text-white transition">
+                <span>RE-SYNC</span>
+              </button>
+            </div>
           </div>
 
           <!-- Logs Table -->
@@ -464,9 +546,102 @@
       </div>
 
     </div>
+
+    <!-- HOTKEY CHEATSHEET STRIP -->
+    <div class="bg-deep-950/80 border border-slate-800 rounded-lg px-4 py-2 flex flex-wrap items-center justify-between text-xs font-mono text-slate-400 gap-2">
+      <div class="flex items-center space-x-1">
+        <span class="text-electric-cyan font-bold">⚡ HOTKEYS:</span>
+      </div>
+      <div class="flex flex-wrap items-center gap-3">
+        <span><span class="kbd-badge">SPACE</span> Start/Stop</span>
+        <span><span class="kbd-badge">T</span> Tap Tempo</span>
+        <span><span class="kbd-badge">↑ / →</span> BPM +1/+5</span>
+        <span><span class="kbd-badge">↓ / ←</span> BPM -1/-5</span>
+        <span><span class="kbd-badge">S</span> Speed Trainer</span>
+      </div>
+      <span class="text-[10px] text-slate-500">Hands-free guitar practice ready</span>
+    </div>
   </main>
 
-  <!-- ADD / EDIT SONG MODAL -->
+  <!-- ========================================================================= -->
+  <!-- MODAL: GUITAR CHORD FRETBOARD DIAGRAM -->
+  <!-- ========================================================================= -->
+  <div id="chordModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="rack-panel max-w-sm w-full rounded-xl p-6 space-y-4 border border-electric-cyan/70 shadow-2xl">
+      <div class="screw screw-tl"></div>
+      <div class="screw screw-tr"></div>
+      <div class="screw screw-bl"></div>
+      <div class="screw screw-br"></div>
+
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <div>
+          <div class="text-[10px] font-mono text-slate-400 uppercase">GUITAR FRETBOARD CHART</div>
+          <h3 class="font-rock text-3xl text-electric-cyan tracking-wider" id="chordModalName">C MAJOR</h3>
+        </div>
+        <button onclick="closeChordModal()" class="text-slate-400 hover:text-white font-mono text-lg">&times;</button>
+      </div>
+
+      <!-- SVG Fretboard Container -->
+      <div class="flex justify-center py-2" id="chordSvgContainer">
+        <!-- Dynamically rendered SVG -->
+      </div>
+
+      <!-- Fingerings / Voicing note -->
+      <div class="bg-black/60 border border-slate-800 rounded p-3 text-xs font-mono space-y-1 text-slate-300">
+        <div><strong>STRINGS:</strong> <span id="chordStringsInfo" class="text-electric-cyan">x 3 2 0 1 0</span></div>
+        <div><strong>FINGERS:</strong> <span id="chordFingersInfo" class="text-slate-400">- 3 2 - 1 -</span></div>
+        <div class="text-[10px] text-slate-500 pt-1 border-t border-slate-800/80" id="chordTip">
+          Rock Tip: Keep thumb anchored behind the neck.
+        </div>
+      </div>
+
+      <button type="button" onclick="closeChordModal()" class="w-full py-2 rounded bg-deep-900 border border-slate-700 text-slate-300 hover:text-white font-mono text-xs uppercase">
+        CLOSE CHART
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: USER PROFILE SWITCHER (Data Isolation) -->
+  <!-- ========================================================================= -->
+  <div id="profileModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="rack-panel max-w-md w-full rounded-xl p-6 space-y-4 border border-blue-700/80 shadow-2xl">
+      <div class="screw screw-tl"></div>
+      <div class="screw screw-tr"></div>
+      <div class="screw screw-bl"></div>
+      <div class="screw screw-br"></div>
+
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <div>
+          <div class="text-[10px] font-mono text-slate-400 uppercase">MUSICIAN PROFILE</div>
+          <h3 class="font-rock text-2xl text-white tracking-wider">CALLSIGN &amp; SETTINGS</h3>
+        </div>
+        <button onclick="closeProfileModal()" class="text-slate-400 hover:text-white font-mono text-base">&times;</button>
+      </div>
+
+      <form id="profileForm" onsubmit="saveProfile(event)" class="space-y-3 font-mono">
+        <div>
+          <label class="text-[10px] uppercase text-slate-400">MUSICIAN / STAGE NAME</label>
+          <input type="text" id="profileNameInput" required placeholder="e.g., Slash, Jimi, Dave, PunkRocker"
+            class="w-full bg-deep-950 border border-slate-700 rounded px-3 py-2 text-xs text-white outline-none focus:border-electric-cyan">
+          <p class="text-[10px] text-slate-500 mt-1">This separates your songs and practice logs from other musicians on this rig.</p>
+        </div>
+
+        <div class="flex space-x-2 pt-2">
+          <button type="button" onclick="generateRandomRockerName()" class="py-2 px-3 rounded bg-deep-900 border border-slate-700 text-electric-cyan hover:bg-blue-950 text-xs">
+            🎲 RANDOM NAME
+          </button>
+          <button type="submit" class="flex-1 py-2 rounded bg-blue-600 hover:bg-blue-500 font-bold text-xs uppercase text-white tracking-wider">
+            SAVE &amp; SWITCH
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: ADD / EDIT SONG -->
+  <!-- ========================================================================= -->
   <div id="songModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="rack-panel max-w-md w-full rounded-xl p-6 space-y-4 border border-blue-700/80 shadow-2xl">
       <div class="screw screw-tl"></div>
@@ -501,9 +676,10 @@
           <label class="text-[10px] uppercase text-slate-400">CHORD PROGRESSION (TAB / CHORDS)</label>
           <input type="text" id="songChordsInput" placeholder="e.g., F5 - Bb5 - Ab5 - Db5"
             class="w-full bg-deep-950 border border-slate-700 rounded px-3 py-1.5 text-xs text-white outline-none focus:border-electric-cyan">
+          <p class="text-[9px] text-slate-500 mt-0.5">Separate with dashes or spaces (e.g. C - Am - F - G)</p>
         </div>
         <div>
-          <label class="text-[10px] uppercase text-slate-400">TUNING & PERFORMANCE NOTES</label>
+          <label class="text-[10px] uppercase text-slate-400">TUNING &amp; PERFORMANCE NOTES</label>
           <textarea id="songNotesInput" rows="2" placeholder="e.g., Standard E tuning, heavy distortion on chorus"
             class="w-full bg-deep-950 border border-slate-700 rounded px-3 py-1.5 text-xs text-white outline-none focus:border-electric-cyan"></textarea>
         </div>
@@ -518,11 +694,122 @@
 
   <!-- FOOTER -->
   <footer class="border-t border-slate-800/80 py-4 bg-deep-950 text-center text-xs font-mono text-slate-500">
-    ALT-ROCK RIG &bull; INDUSTRIAL SOUND ENGINE &bull; DOCKERIZED NODE.JS & POSTGRESQL &bull; 2026
+    RIFFRIG &bull; ALT-ROCK SYNTH ENGINE &bull; DOCKERIZED NODE.JS &amp; POSTGRESQL &bull; 2026
   </footer>
 
-  <!-- Web Audio Metronome & Logic -->
+  <!-- ========================================================================= -->
+  <!-- MAIN JAVASCRIPT: WEB AUDIO & RIG ENGINE -->
+  <!-- ========================================================================= -->
   <script>
+    // -------------------------------------------------------------------------
+    // 1. MUSICIAN PROFILE & USER SEPARATION
+    // -------------------------------------------------------------------------
+    let currentUserId = localStorage.getItem('riffrig_user_id');
+    let currentUserName = localStorage.getItem('riffrig_user_name');
+
+    if (!currentUserId || !currentUserName) {
+      currentUserId = 'rocker_' + Math.random().toString(36).substring(2, 9);
+      currentUserName = 'Rocker_' + Math.floor(100 + Math.random() * 900);
+      localStorage.setItem('riffrig_user_id', currentUserId);
+      localStorage.setItem('riffrig_user_name', currentUserName);
+    }
+
+    function updateProfileUI() {
+      document.getElementById('activeUserName').textContent = currentUserName;
+    }
+
+    function openProfileModal() {
+      document.getElementById('profileNameInput').value = currentUserName;
+      document.getElementById('profileModal').classList.remove('hidden');
+    }
+
+    function closeProfileModal() {
+      document.getElementById('profileModal').classList.add('hidden');
+    }
+
+    function generateRandomRockerName() {
+      const names = ['Hendrix', 'Slash', 'Cobain', 'Grohl', 'Flea', 'VanHalen', 'Page', 'Iommi', 'Clapton', 'Frusciante', 'Morello'];
+      const num = Math.floor(100 + Math.random() * 900);
+      document.getElementById('profileNameInput').value = names[Math.floor(Math.random() * names.length)] + '_' + num;
+    }
+
+    function saveProfile(e) {
+      e.preventDefault();
+      const newName = document.getElementById('profileNameInput').value.trim();
+      if (!newName) return;
+      currentUserName = newName;
+      // create a clean ID from the name if needed, or preserve existing
+      currentUserId = newName.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + currentUserId.split('_').pop();
+      localStorage.setItem('riffrig_user_id', currentUserId);
+      localStorage.setItem('riffrig_user_name', currentUserName);
+      updateProfileUI();
+      closeProfileModal();
+      // Re-fetch user-scoped data
+      fetchStats();
+      fetchSongs();
+      fetchPracticeLogs();
+    }
+
+    // Helper for API fetch with user identity headers
+    function apiFetch(url, options = {}) {
+      options.headers = options.headers || {};
+      options.headers['x-user-id'] = currentUserId;
+      options.headers['x-user-name'] = encodeURIComponent(currentUserName);
+      return fetch(url, options);
+    }
+
+    // -------------------------------------------------------------------------
+    // 2. SCREEN WAKE LOCK API (Prevents screen from sleeping while playing)
+    // -------------------------------------------------------------------------
+    let wakeLockSentinel = null;
+
+    async function requestWakeLock() {
+      if ('wakeLock' in navigator) {
+        try {
+          wakeLockSentinel = await navigator.wakeLock.request('screen');
+          updateWakeLockUI(true);
+          wakeLockSentinel.addEventListener('release', () => {
+            updateWakeLockUI(false);
+          });
+        } catch (err) {
+          console.warn('Wake Lock request failed:', err);
+        }
+      }
+    }
+
+    function releaseWakeLock() {
+      if (wakeLockSentinel) {
+        wakeLockSentinel.release().then(() => {
+          wakeLockSentinel = null;
+          updateWakeLockUI(false);
+        }).catch(() => {});
+      }
+    }
+
+    function updateWakeLockUI(active) {
+      const dot = document.getElementById('wakeLockDot');
+      const text = document.getElementById('wakeLockText');
+      if (active) {
+        dot.className = 'w-2 h-2 rounded-full bg-electric-cyan shadow-[0_0_8px_#00e5ff] animate-pulse';
+        text.textContent = 'SCREEN AWAKE: ON';
+        text.className = 'text-electric-cyan font-bold';
+      } else {
+        dot.className = 'w-2 h-2 rounded-full bg-slate-600';
+        text.textContent = 'SCREEN AWAKE: OFF';
+        text.className = 'text-slate-400';
+      }
+    }
+
+    // Re-acquire lock if tab becomes visible again while playing
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && isPlaying) {
+        requestWakeLock();
+      }
+    });
+
+    // -------------------------------------------------------------------------
+    // 3. METRONOME AUDIO ENGINE & SOUND PACKS
+    // -------------------------------------------------------------------------
     let audioCtx = null;
     let isPlaying = false;
     let currentBeat = 0;
@@ -535,10 +822,10 @@
 
     let activeSong = null;
     let tapTimes = [];
+    let currentSoundKit = 'woodblock';
 
-    let timerRunning = false;
-    let timerSeconds = 0;
-    let stopwatchInterval = null;
+    // Speed Trainer variables
+    let trainerBarsCompleted = 0;
 
     function initAudio() {
       if (!audioCtx) {
@@ -549,27 +836,101 @@
       }
     }
 
-    // Precise synthesized woodblock/rimshot click using Web Audio API
+    function changeSoundKit(kit) {
+      currentSoundKit = kit;
+      const label = document.getElementById('clickSoundLabel');
+      label.textContent = `KIT: ${kit.toUpperCase()}`;
+    }
+
+    // Synthesizes various sound kits cleanly without external samples
     function scheduleNote(beatNumber, time) {
-      const osc = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-
-      osc.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-
       const isAccent = (beatNumber === 0) && document.getElementById('accentBeat').checked;
       const masterVol = parseFloat(document.getElementById('volumeControl').value);
 
-      // Pitch: 880Hz for Beat 1 accent, 440Hz for regular beats
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(isAccent ? 880 : 440, time);
+      if (currentSoundKit === 'woodblock') {
+        // Authentic analog woodblock: pitch drop from 800Hz/1200Hz to 300Hz with exponential decay
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
 
-      gainNode.gain.setValueAtTime(masterVol, time);
-      gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.06);
+        const freq = isAccent ? 1200 : 800;
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, time);
+        osc.frequency.exponentialRampToValueAtTime(300, time + 0.04);
 
-      osc.start(time);
-      osc.stop(time + 0.06);
+        gain.gain.setValueAtTime(masterVol * 1.2, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
 
+        osc.start(time);
+        osc.stop(time + 0.045);
+      } 
+      else if (currentSoundKit === 'cowbell') {
+        // Classic 808 Rock Cowbell: Dual tuned metallic square waves bandpassed around 800Hz
+        const osc1 = audioCtx.createOscillator();
+        const osc2 = audioCtx.createOscillator();
+        const bpf = audioCtx.createBiquadFilter();
+        const gain = audioCtx.createGain();
+
+        osc1.type = 'square';
+        osc2.type = 'square';
+
+        const pitchMult = isAccent ? 1.25 : 1.0;
+        osc1.frequency.setValueAtTime(587 * pitchMult, time);
+        osc2.frequency.setValueAtTime(845 * pitchMult, time);
+
+        bpf.type = 'bandpass';
+        bpf.frequency.setValueAtTime(820 * pitchMult, time);
+        bpf.Q.setValueAtTime(2.5, time);
+
+        osc1.connect(bpf);
+        osc2.connect(bpf);
+        bpf.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        gain.gain.setValueAtTime(masterVol * 0.9, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.09);
+
+        osc1.start(time);
+        osc2.start(time);
+        osc1.stop(time + 0.095);
+        osc2.stop(time + 0.095);
+      }
+      else if (currentSoundKit === 'rimshot') {
+        // Industrial Rimshot: Noise punch + sharp tone burst
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(isAccent ? 920 : 640, time);
+        osc.frequency.exponentialRampToValueAtTime(150, time + 0.03);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        gain.gain.setValueAtTime(masterVol * 1.1, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.035);
+
+        osc.start(time);
+        osc.stop(time + 0.04);
+      }
+      else {
+        // Cyber Beep: High-tech clean tone (880Hz / 440Hz)
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(isAccent ? 880 : 440, time);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        gain.gain.setValueAtTime(masterVol, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.06);
+
+        osc.start(time);
+        osc.stop(time + 0.065);
+      }
+
+      // Schedule Visual LED Flash synchronously with audio thread
       const delayMs = Math.max(0, (time - audioCtx.currentTime) * 1000);
       setTimeout(() => {
         updateBeatVisuals(beatNumber);
@@ -588,8 +949,79 @@
       const secondsPerBeat = 60.0 / bpm;
       nextNoteTime += secondsPerBeat;
       currentBeat = (currentBeat + 1) % beatsPerBar;
+
+      // When a measure/bar completes (hitting beat 0)
+      if (currentBeat === 0) {
+        handleBarCompleted();
+      }
     }
 
+    // -------------------------------------------------------------------------
+    // 4. SPEED TRAINER LOGIC (Auto BPM Increment every N bars)
+    // -------------------------------------------------------------------------
+    function toggleSpeedTrainerUI() {
+      const active = document.getElementById('speedTrainerActive').checked;
+      const controls = document.getElementById('speedTrainerControls');
+      const badge = document.getElementById('speedTrainerBadge');
+      if (active) {
+        controls.classList.remove('hidden');
+        badge.textContent = 'ACTIVE';
+        badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded bg-electric-cyan text-black font-bold';
+      } else {
+        controls.classList.add('hidden');
+        badge.textContent = 'OFF';
+        badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded bg-deep-900 text-slate-500 border border-slate-800';
+      }
+      trainerBarsCompleted = 0;
+      updateTrainerUI();
+    }
+
+    function handleBarCompleted() {
+      const active = document.getElementById('speedTrainerActive').checked;
+      if (!active || !isPlaying) return;
+
+      const targetBpm = parseInt(document.getElementById('trainerTargetBpm').value, 10);
+      const stepBpm = parseInt(document.getElementById('trainerStepBpm').value, 10);
+      const intervalBars = parseInt(document.getElementById('trainerIntervalBars').value, 10);
+
+      trainerBarsCompleted++;
+      updateTrainerUI();
+
+      if (trainerBarsCompleted >= intervalBars) {
+        trainerBarsCompleted = 0;
+        if (bpm < targetBpm) {
+          const newBpm = Math.min(targetBpm, bpm + stepBpm);
+          setBpm(newBpm);
+
+          const statusMsg = document.getElementById('trainerStatusMsg');
+          statusMsg.textContent = `⚡ ACCEL +${stepBpm} BPM!`;
+          statusMsg.className = 'text-electric-glow font-bold animate-pulse';
+
+          setTimeout(() => {
+            statusMsg.className = 'text-electric-cyan';
+            if (newBpm >= targetBpm) {
+              statusMsg.textContent = '🎯 TARGET REACHED!';
+              statusMsg.className = 'text-emerald-400 font-bold';
+            } else {
+              statusMsg.textContent = 'ACCEL: TRACKING';
+            }
+          }, 1500);
+        }
+        updateTrainerUI();
+      }
+    }
+
+    function updateTrainerUI() {
+      const intervalBars = parseInt(document.getElementById('trainerIntervalBars').value, 10);
+      const countEl = document.getElementById('trainerBarCount');
+      if (countEl) {
+        countEl.textContent = `${trainerBarsCompleted} / ${intervalBars}`;
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // 5. PLAY / STOP & TEMPO CONTROLS
+    // -------------------------------------------------------------------------
     function togglePlay() {
       initAudio();
       isPlaying = !isPlaying;
@@ -600,15 +1032,19 @@
 
       if (isPlaying) {
         currentBeat = 0;
+        trainerBarsCompleted = 0;
+        updateTrainerUI();
         nextNoteTime = audioCtx.currentTime + 0.05;
         scheduler();
+        requestWakeLock();
         playBtn.className = 'col-span-2 stomp-btn-stop py-4 px-4 rounded-lg font-rock text-2xl tracking-wider text-red-400 flex items-center justify-center space-x-2';
-        playText.textContent = 'DISENGAGE (STOP)';
+        playText.textContent = 'DISENGAGE (STOP) [SPACE]';
         playIcon.textContent = '⏹';
       } else {
         clearTimeout(timerID);
+        releaseWakeLock();
         playBtn.className = 'col-span-2 stomp-btn py-4 px-4 rounded-lg font-rock text-2xl tracking-wider text-white flex items-center justify-center space-x-2';
-        playText.textContent = 'ENGAGE METRONOME';
+        playText.textContent = 'ENGAGE METRONOME [SPACE]';
         playIcon.textContent = '▶';
         clearBeatVisuals();
       }
@@ -696,7 +1132,13 @@
       }
     }
 
-    // Stopwatch logic
+    // -------------------------------------------------------------------------
+    // 6. STOPWATCH & SESSION LOGGING
+    // -------------------------------------------------------------------------
+    let timerRunning = false;
+    let timerSeconds = 0;
+    let stopwatchInterval = null;
+
     function toggleTimer() {
       const btn = document.getElementById('startTimerBtn');
       timerRunning = !timerRunning;
@@ -730,7 +1172,7 @@
     function selectSongToPractice(song) {
       activeSong = song;
       document.getElementById('activeSongTitle').textContent = `${song.title} ${song.artist ? '[' + song.artist + ']' : ''}`;
-      document.getElementById('activeSongChords').textContent = `CHORDS: ${song.chords || 'NO CHORDS'}`;
+      document.getElementById('activeSongChords').innerHTML = `CHORDS: ${renderClickableChords(song.chords)}`;
       setBpm(song.target_bpm);
       if (song.time_signature) {
         const beats = parseInt(song.time_signature.split('/')[0], 10);
@@ -748,30 +1190,185 @@
       document.getElementById('activeSongChords').textContent = 'NO CHORDS LOADED';
     }
 
-    // API calls
+    // -------------------------------------------------------------------------
+    // 7. INTERACTIVE GUITAR CHORD FRETBOARD DIAGRAM
+    // -------------------------------------------------------------------------
+    const CHORD_DATABASE = {
+      'C': { frets: ['x', 3, 2, 0, 1, 0], fingers: ['-', 3, 2, '-', 1, '-'], tip: 'Standard open C Major chord. Keep finger 1 arched.' },
+      'D': { frets: ['x', 'x', 0, 2, 3, 2], fingers: ['-', '-', '-', 1, 3, 2], tip: 'Strum from string 4 (D). Mute strings 5 & 6.' },
+      'E': { frets: [0, 2, 2, 1, 0, 0], fingers: ['-', 2, 3, 1, '-', '-'], tip: 'Full 6-string open E Major rock chord.' },
+      'G': { frets: [3, 2, 0, 0, 0, 3], fingers: [2, 1, '-', '-', '-', 3], tip: 'Classic 4-finger or 3-finger rock G chord.' },
+      'A': { frets: ['x', 0, 2, 2, 2, 0], fingers: ['-', '-', 1, 2, 3, '-'], tip: 'Keep fingers bunched in fret 2 or use index barre.' },
+      'Em': { frets: [0, 2, 2, 0, 0, 0], fingers: ['-', 2, 3, '-', '-', '-'], tip: 'Simple 2-finger open minor chord.' },
+      'Am': { frets: ['x', 0, 2, 2, 1, 0], fingers: ['-', '-', 2, 3, 1, '-'], tip: 'Strum from string 5 down.' },
+      'Dm': { frets: ['x', 'x', 0, 2, 3, 1], fingers: ['-', '-', '-', 2, 3, 1], tip: 'Strum strings 4 down to 1.' },
+      'Bm': { frets: ['x', 2, 4, 4, 3, 2], fingers: ['-', 1, 3, 4, 2, 1], tip: 'Barre chord on fret 2. Practice thumb counter-pressure.' },
+      'F': { frets: [1, 3, 3, 2, 1, 1], fingers: [1, 3, 4, 2, 1, 1], tip: 'Full barre on fret 1. Great for building hand stamina.' },
+      'F#m': { frets: [2, 4, 4, 2, 2, 2], fingers: [1, 3, 4, 1, 1, 1], tip: 'Fret 2 barre minor chord.' },
+      'C#m': { frets: ['x', 4, 6, 6, 5, 4], fingers: ['-', 1, 3, 4, 2, 1], tip: 'Barre on fret 4 (A minor shape).' },
+      'B7': { frets: ['x', 2, 1, 2, 0, 2], fingers: ['-', 2, 1, 3, '-', 4], tip: 'Dominant 7th blues/rock resolving chord.' },
+      'E7': { frets: [0, 2, 0, 1, 0, 0], fingers: ['-', 2, '-', 1, '-', '-'], tip: 'Open E dominant 7th.' },
+      'A7': { frets: ['x', 0, 2, 0, 2, 0], fingers: ['-', '-', 2, '-', 3, '-'], tip: 'Open A dominant 7th.' },
+      // Power Chords (Essential for Alt-Rock / Grunge)
+      'F5': { frets: [1, 3, 3, 'x', 'x', 'x'], fingers: [1, 3, 4, '-', '-', '-'], tip: 'Root on Low E (Fret 1). Heavy grunge power chord.' },
+      'G5': { frets: [3, 5, 5, 'x', 'x', 'x'], fingers: [1, 3, 4, '-', '-', '-'], tip: 'Root on Low E (Fret 3).' },
+      'A5': { frets: [5, 7, 7, 'x', 'x', 'x'], fingers: [1, 3, 4, '-', '-', '-'], tip: 'Root on Low E (Fret 5) or open A.' },
+      'B5': { frets: ['x', 2, 4, 4, 'x', 'x'], fingers: ['-', 1, 3, 4, '-', '-'], tip: 'Root on A string (Fret 2).' },
+      'Bb5': { frets: ['x', 1, 3, 3, 'x', 'x'], fingers: ['-', 1, 3, 4, '-', '-'], tip: 'Root on A string (Fret 1) - Teen Spirit chord.' },
+      'C5': { frets: ['x', 3, 5, 5, 'x', 'x'], fingers: ['-', 1, 3, 4, '-', '-'], tip: 'Root on A string (Fret 3).' },
+      'D5': { frets: ['x', 5, 7, 7, 'x', 'x'], fingers: ['-', 1, 3, 4, '-', '-'], tip: 'Root on A string (Fret 5).' },
+      'Db5': { frets: ['x', 4, 6, 6, 'x', 'x'], fingers: ['-', 1, 3, 4, '-', '-'], tip: 'Root on A string (Fret 4).' },
+      'Ab5': { frets: [4, 6, 6, 'x', 'x', 'x'], fingers: [1, 3, 4, '-', '-', '-'], tip: 'Root on Low E (Fret 4).' }
+    };
+
+    function renderClickableChords(chordString) {
+      if (!chordString) return 'NO CHORDS';
+      // Tokenize by dashes, slashes, or spaces
+      const tokens = chordString.split(/[\s\-–—/]+/).filter(t => t.trim().length > 0);
+      return tokens.map(tok => {
+        const clean = tok.replace(/[^a-zA-Z0-9#]/g, '');
+        return `<span onclick="showChordModal('${clean}')" class="chord-pill px-1.5 py-0.5 rounded bg-blue-950 text-electric-cyan border border-blue-800 text-[11px] font-mono font-bold mr-1 inline-block">🎸 ${escapeHtml(tok)}</span>`;
+      }).join(' ');
+    }
+
+    function showChordModal(chordName) {
+      const modal = document.getElementById('chordModal');
+      const nameEl = document.getElementById('chordModalName');
+      const svgBox = document.getElementById('chordSvgContainer');
+      const stringsEl = document.getElementById('chordStringsInfo');
+      const fingersEl = document.getElementById('chordFingersInfo');
+      const tipEl = document.getElementById('chordTip');
+
+      nameEl.textContent = chordName.toUpperCase();
+      const chord = CHORD_DATABASE[chordName] || CHORD_DATABASE[chordName.toUpperCase()] || {
+        frets: ['x', 'x', 'x', 'x', 'x', 'x'],
+        fingers: ['-', '-', '-', '-', '-', '-'],
+        tip: 'Chord fingering not in preset library. Try standard power chord shape.'
+      };
+
+      stringsEl.textContent = chord.frets.join(' ');
+      fingersEl.textContent = chord.fingers.join(' ');
+      tipEl.textContent = chord.tip;
+
+      svgBox.innerHTML = generateFretboardSvg(chord.frets, chord.fingers);
+      modal.classList.remove('hidden');
+    }
+
+    function closeChordModal() {
+      document.getElementById('chordModal').classList.add('hidden');
+    }
+
+    function generateFretboardSvg(frets, fingers) {
+      const width = 200;
+      const height = 210;
+      const startX = 35;
+      const startY = 35;
+      const stringSpacing = 26;
+      const fretSpacing = 38;
+      const numFrets = 4;
+      const numStrings = 6;
+
+      let svg = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" class="overflow-visible font-mono">`;
+      // Nut bar
+      svg += `<rect x="${startX - 2}" y="${startY - 4}" width="${stringSpacing * 5 + 4}" height="6" fill="#e2e8f0" rx="1"/>`;
+
+      // Frets (Horizontal lines)
+      for (let f = 1; f <= numFrets; f++) {
+        const y = startY + f * fretSpacing;
+        svg += `<line x1="${startX}" y1="${y}" x2="${startX + stringSpacing * 5}" y2="${y}" stroke="#475569" stroke-width="2"/>`;
+        svg += `<text x="14" y="${y - 12}" fill="#64748b" font-size="10">${f}</text>`;
+      }
+
+      // Strings (Vertical lines)
+      for (let s = 0; s < numStrings; s++) {
+        const x = startX + s * stringSpacing;
+        const strokeW = 1 + (5 - s) * 0.4;
+        svg += `<line x1="${x}" y1="${startY}" x2="${x}" y2="${startY + numFrets * fretSpacing}" stroke="#94a3b8" stroke-width="${strokeW}"/>`;
+      }
+
+      // Dots, O, X markers
+      for (let s = 0; s < numStrings; s++) {
+        const x = startX + s * stringSpacing;
+        const val = frets[s];
+        const fNum = fingers[s];
+
+        if (val === 'x' || val === 'X') {
+          svg += `<text x="${x}" y="${startY - 10}" fill="#ef4444" font-size="12" font-weight="bold" text-anchor="middle">×</text>`;
+        } else if (val === 0 || val === '0') {
+          svg += `<circle cx="${x}" cy="${startY - 14}" r="4" fill="none" stroke="#38bdf8" stroke-width="2"/>`;
+        } else if (typeof val === 'number' && val > 0 && val <= numFrets) {
+          const cy = startY + (val - 0.5) * fretSpacing;
+          svg += `<circle cx="${x}" cy="${cy}" r="9" fill="#00e5ff" stroke="#ffffff" stroke-width="2"/>`;
+          if (fNum && fNum !== '-') {
+            svg += `<text x="${x}" y="${cy + 3.5}" fill="#050b18" font-size="10" font-weight="bold" text-anchor="middle">${fNum}</text>`;
+          }
+        }
+      }
+
+      svg += `</svg>`;
+      return svg;
+    }
+
+    // -------------------------------------------------------------------------
+    // 8. KEYBOARD HOTKEYS (Hands-free control)
+    // -------------------------------------------------------------------------
+    window.addEventListener('keydown', (e) => {
+      // Don't intercept when user is typing inside an input or textarea
+      const tag = e.target.tagName.toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || tag === 'select') {
+        return;
+      }
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlay();
+      } else if (e.code === 'KeyT') {
+        e.preventDefault();
+        handleTapTempo();
+      } else if (e.code === 'ArrowUp' || e.code === 'ArrowRight') {
+        e.preventDefault();
+        adjustBpm(e.shiftKey ? 5 : 1);
+      } else if (e.code === 'ArrowDown' || e.code === 'ArrowLeft') {
+        e.preventDefault();
+        adjustBpm(e.shiftKey ? -5 : -1);
+      } else if (e.code === 'KeyS') {
+        e.preventDefault();
+        const chk = document.getElementById('speedTrainerActive');
+        chk.checked = !chk.checked;
+        toggleSpeedTrainerUI();
+      } else if (e.code === 'Escape') {
+        closeChordModal();
+        closeProfileModal();
+        closeSongModal();
+      }
+    });
+
+    // -------------------------------------------------------------------------
+    // 9. API CALLS & PERSISTENCE
+    // -------------------------------------------------------------------------
     async function checkHealth() {
       const led = document.getElementById('healthLed');
       const text = document.getElementById('healthText');
       try {
-        const res = await fetch('/api/health');
+        const res = await apiFetch('/api/health');
         const data = await res.json();
         if (data.status === 'ok' && data.database?.status === 'connected') {
-          led.className = 'w-2.5 h-2.5 rounded-full bg-electric-cyan shadow-[0_0_10px_#00e5ff]';
-          text.textContent = 'RIG ONLINE &bull; POSTGRESQL LOCKED';
-          text.className = 'text-xs font-mono font-semibold tracking-wider text-electric-cyan';
+          led.className = 'w-2 h-2 rounded-full bg-electric-cyan shadow-[0_0_10px_#00e5ff]';
+          text.textContent = 'ONLINE &bull; PG LOCKED';
+          text.className = 'text-[11px] font-mono font-semibold tracking-wider text-electric-cyan';
         } else {
           throw new Error('Database not ready');
         }
       } catch (e) {
-        led.className = 'w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_10px_#ef4444]';
-        text.textContent = 'DB OFFLINE / STANDBY';
-        text.className = 'text-xs font-mono font-semibold tracking-wider text-red-400';
+        led.className = 'w-2 h-2 rounded-full bg-red-500 shadow-[0_0_10px_#ef4444]';
+        text.textContent = 'DB OFFLINE';
+        text.className = 'text-[11px] font-mono font-semibold tracking-wider text-red-400';
       }
     }
 
     async function fetchStats() {
       try {
-        const res = await fetch('/api/stats');
+        const res = await apiFetch('/api/stats');
         const data = await res.json();
         document.getElementById('statSongs').textContent = data.total_songs || 0;
         document.getElementById('statSessions').textContent = data.total_sessions || 0;
@@ -785,35 +1382,41 @@
     async function fetchSongs() {
       const container = document.getElementById('songsList');
       try {
-        const res = await fetch('/api/songs');
+        const res = await apiFetch('/api/songs');
         const songs = await res.json();
         if (!songs.length) {
           container.innerHTML = '<div class="text-xs font-mono text-slate-500 py-6 text-center">NO TRACKS FOUND. HIT "+ NEW TRACK" TO ADD TO SETLIST.</div>';
           return;
         }
 
-        container.innerHTML = songs.map(s => `
-          <div class="p-3 bg-deep-950 border border-slate-800 rounded flex items-center justify-between hover:border-blue-700 transition">
-            <div class="flex-1 min-w-0 pr-3">
-              <div class="flex items-center space-x-2">
-                <span class="text-sm font-bold text-white tracking-wide truncate">${escapeHtml(s.title)}</span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-950 text-electric-cyan border border-blue-800">${s.target_bpm} BPM</span>
-                <span class="text-[10px] font-mono text-slate-500">${s.time_signature || '4/4'}</span>
+        container.innerHTML = songs.map(s => {
+          const isGlobal = (s.user_id === 'global');
+          return `
+            <div class="p-3 bg-deep-950 border border-slate-800 rounded flex items-center justify-between hover:border-blue-700 transition">
+              <div class="flex-1 min-w-0 pr-3">
+                <div class="flex items-center space-x-2">
+                  <span class="text-sm font-bold text-white tracking-wide truncate">${escapeHtml(s.title)}</span>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-950 text-electric-cyan border border-blue-800">${s.target_bpm} BPM</span>
+                  <span class="text-[10px] font-mono text-slate-500">${s.time_signature || '4/4'}</span>
+                  ${isGlobal ? '<span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-slate-800 text-slate-400">GLOBAL DEMO</span>' : ''}
+                </div>
+                <div class="text-xs font-mono text-slate-400 truncate mt-0.5">${s.artist ? escapeHtml(s.artist) : 'UNKNOWN ARTIST'}</div>
+                ${s.chords ? `<div class="mt-1.5">${renderClickableChords(s.chords)}</div>` : ''}
               </div>
-              <div class="text-xs font-mono text-slate-400 truncate mt-0.5">${s.artist ? escapeHtml(s.artist) : 'UNKNOWN ARTIST'}</div>
-              ${s.chords ? `<div class="text-xs font-mono text-electric-cyan bg-blue-950/60 px-2 py-0.5 rounded mt-1.5 inline-block border border-blue-900/50">TAB: ${escapeHtml(s.chords)}</div>` : ''}
+              <div class="flex items-center space-x-2">
+                <button onclick='selectSongToPractice(${JSON.stringify(s).replace(/'/g, "&#39;")})'
+                  class="px-3 py-1.5 rounded bg-blue-600/30 hover:bg-blue-600 text-blue-300 hover:text-white font-mono text-xs font-bold transition">
+                  ⚡ LOAD
+                </button>
+                ${!isGlobal ? `
+                  <button onclick="deleteSong(${s.id})" class="p-1.5 text-slate-500 hover:text-red-400 text-xs font-mono" title="DELETE TRACK">
+                    ✕
+                  </button>
+                ` : ''}
+              </div>
             </div>
-            <div class="flex items-center space-x-2">
-              <button onclick='selectSongToPractice(${JSON.stringify(s).replace(/'/g, "&#39;")})'
-                class="px-3 py-1.5 rounded bg-blue-600/30 hover:bg-blue-600 text-blue-300 hover:text-white font-mono text-xs font-bold transition">
-                ⚡ LOAD
-              </button>
-              <button onclick="deleteSong(${s.id})" class="p-1.5 text-slate-500 hover:text-red-400 text-xs font-mono" title="DELETE TRACK">
-                ✕
-              </button>
-            </div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
       } catch (e) {
         container.innerHTML = '<div class="text-xs font-mono text-red-400 py-4 text-center">FAILED TO LOAD TRACKS</div>';
       }
@@ -822,10 +1425,10 @@
     async function fetchPracticeLogs() {
       const tbody = document.getElementById('logsTableBody');
       try {
-        const res = await fetch('/api/practice-logs');
+        const res = await apiFetch('/api/practice-logs');
         const logs = await res.json();
         if (!logs.length) {
-          tbody.innerHTML = '<tr><td colspan="7" class="py-6 text-center text-slate-500 font-mono">NO SESSIONS RECORDED YET</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" class="py-6 text-center text-slate-500 font-mono">NO SESSIONS RECORDED YET FOR THIS PROFILE</td></tr>';
           return;
         }
 
@@ -863,7 +1466,7 @@
       };
 
       try {
-        const res = await fetch('/api/practice-logs', {
+        const res = await apiFetch('/api/practice-logs', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -882,7 +1485,7 @@
     async function deletePracticeLog(id) {
       if (!confirm('DELETE THIS SESSION ENTRY?')) return;
       try {
-        await fetch(`/api/practice-logs/${id}`, { method: 'DELETE' });
+        await apiFetch(`/api/practice-logs/${id}`, { method: 'DELETE' });
         fetchPracticeLogs();
         fetchStats();
       } catch (e) {
@@ -902,7 +1505,7 @@
       };
 
       try {
-        const res = await fetch('/api/songs', {
+        const res = await apiFetch('/api/songs', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -918,9 +1521,14 @@
     }
 
     async function deleteSong(id) {
-      if (!confirm('DELETE THIS TRACK FROM SETLIST?')) return;
+      if (!confirm('DELETE THIS TRACK FROM YOUR SETLIST?')) return;
       try {
-        await fetch(`/api/songs/${id}`, { method: 'DELETE' });
+        const res = await apiFetch(`/api/songs/${id}`, { method: 'DELETE' });
+        if (!res.ok) {
+          const err = await res.json();
+          alert(err.error || 'DELETE FAILED');
+          return;
+        }
         fetchSongs();
         fetchStats();
       } catch (e) {
@@ -937,6 +1545,28 @@
       document.getElementById('songModal').classList.add('hidden');
     }
 
+    // -------------------------------------------------------------------------
+    // 10. CSV EXPORT
+    // -------------------------------------------------------------------------
+    async function exportLogsCSV() {
+      try {
+        const res = await apiFetch('/api/export-logs');
+        if (!res.ok) throw new Error('Export failed');
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = `practice_logs_${currentUserName.replace(/\s+/g, '_')}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } catch (e) {
+        alert('EXPORT FAILED: ' + e.message);
+      }
+    }
+
     function escapeHtml(string) {
       if (!string) return '';
       return String(string)
@@ -947,7 +1577,11 @@
         .replace(/'/g, '&#039;');
     }
 
+    // -------------------------------------------------------------------------
+    // 11. INITIALIZATION & PWA SERVICE WORKER
+    // -------------------------------------------------------------------------
     document.addEventListener('DOMContentLoaded', () => {
+      updateProfileUI();
       renderBeatDots();
       setBpm(120);
 
@@ -965,6 +1599,13 @@
       fetchPracticeLogs();
 
       setInterval(checkHealth, 5000);
+
+      // Register PWA Service Worker
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(err => {
+          console.log('SW registration note:', err.message);
+        });
+      }
     });
   </script>
 </body>
