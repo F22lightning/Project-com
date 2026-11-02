@@ -76,6 +76,12 @@ function getUserProfile(req) {
 
 // Auto-initialize Database tables with retry logic & migrations
 async function initDatabase(retries = 10, delay = 3000) {
+  // If running in Vercel serverless without a remote cloud DB, skip retries
+  if (process.env.VERCEL && !process.env.DATABASE_URL && (!process.env.DB_HOST || process.env.DB_HOST === 'music-db')) {
+    console.log('[Database] Running on Vercel serverless without remote cloud DB. Skipping local container DB retries.');
+    return;
+  }
+
   while (retries > 0) {
     try {
       console.log(`[Database] Attempting connection to PostgreSQL (${retries} attempts left)...`);
@@ -407,15 +413,19 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Start Server
-app.listen(PORT, async () => {
-  console.log(`=======================================================`);
-  console.log(` 🎵 RiffRig - Alt-Rock Metronome & Practice Workstation`);
-  console.log(` 🌐 Port: ${PORT}`);
-  console.log(` 🌐 Healthcheck URL: http://localhost:${PORT}/api/health`);
-  console.log(`=======================================================`);
-  await initDatabase();
-});
+// Start Server (only when not running inside Vercel Serverless environment)
+if (!process.env.VERCEL) {
+  app.listen(PORT, async () => {
+    console.log(`=======================================================`);
+    console.log(` 🎵 RiffRig - Alt-Rock Metronome & Practice Workstation`);
+    console.log(` 🌐 Port: ${PORT}`);
+    console.log(` 🌐 Healthcheck URL: http://localhost:${PORT}/api/health`);
+    console.log(`=======================================================`);
+    await initDatabase();
+  });
+} else {
+  initDatabase().catch(err => console.log('[Vercel] DB init note:', err.message));
+}
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
@@ -423,3 +433,5 @@ process.on('SIGTERM', async () => {
   await pool.end();
   process.exit(0);
 });
+
+module.exports = app;
